@@ -1,7 +1,7 @@
 <template>
   <div class="login-bg">
     <div class="login-container">
-      <h1>登录</h1>
+      <h1>注册</h1>
       <form @submit.prevent="login">
         <div class="form-group">
           <label for="username">用户名:</label>
@@ -28,14 +28,11 @@ var username=ref("");
 var password=ref("");
 
 function submit(){
-  proxy.$http.post("http://localhost:8000/api/login/",{
+  proxy.$http.post("http://localhost:8000/api/register/",{
     'username':username.value,
     'password':password.value,
   },{
-    headers: {'Content-Type': 'multipart/form-data'}
-  }).then((res)=>{
-    localStorage.setItem('session',res.data.session);
-    localStorage.setItem('username',res.data.username);
+    headers: {'Content-Type': 'multipart/form-data'},
   });
   router.push('/user');
 }

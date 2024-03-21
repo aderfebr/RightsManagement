@@ -9,12 +9,10 @@
         background-color="#427eff"
         text-color="#fff"
         :default-active="activeIndex"
-        :router="true"
+        :unique-opened=true
+        :router=true
         >
-          <el-sub-menu v-for="item in index">
-            <template #title><el-icon><component :is="item.icon" /></el-icon>{{ item.label }}</template>
-            <el-menu-item v-for="child in item.children" :index="child.index">{{ child.label }}</el-menu-item>
-          </el-sub-menu>
+          <el-menu-item v-for="item in index" :index="item.index"><el-icon><component :is="item.icon" /></el-icon>{{ item.label }}</el-menu-item>
         </el-menu>
       </el-scrollbar>
     </el-col>
@@ -26,43 +24,22 @@
 </template>
 
 <script setup>
+import { getCurrentInstance,onMounted,ref } from 'vue';
 import {useRouter} from 'vue-router'
+const {proxy} = getCurrentInstance()
 
 var activeIndex=useRouter().currentRoute.value.path;
+var index=ref()
 
-var index=[{
-  label:"权限管理",
-  icon:"Operation",
-  vis:true,
-  children:[{
-    label:"用户管理",
-    vis:false,
-    index:"/user",
-  },
-  {
-    label:"角色管理",
-    vis:true,
-    index:"/role",
-  },
-  {
-    label:"菜单管理",
-    vis:true,
-    index:"/menu",
-  },
-  ]
-},
-{
-  label:"功能一",
-  icon:"MoreFilled",
-  vis:true,
-  children:[
-    {
-    label:"测试一",
-    vis:true,
-    index:"",
-    },
-  ]
-}];
+function get_menu(){
+  proxy.$http.get("http://localhost:8000/api/menu/").then((res)=>{
+  index.value=res.data;
+  });
+}
+
+onMounted(()=>{
+  get_menu();
+})
 </script>
 
 <style scoped>

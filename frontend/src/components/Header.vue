@@ -1,14 +1,15 @@
 <template>
   <div class="header">
     <span>
-      <span v-if="!auth">当前未登录</span>
-      <span v-if="auth">当前用户:&ensp;{{auth.username}}</span>
+      <span v-if="username==undefined">当前未登录</span>
+      <span v-if="username">当前用户:&ensp;{{username}}</span>
       &ensp;
       <el-dropdown class="setting">
             <el-icon size="25px"><setting/></el-icon>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item @click="login">切换用户</el-dropdown-item>
+                <el-dropdown-item @click="login">用户登录</el-dropdown-item>
+                <el-dropdown-item @click="register">用户注册</el-dropdown-item>
                 <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -18,20 +19,28 @@
 </template>
 
 <script setup>
-import Cookies from 'vue-cookies'
-import { ref } from 'vue';
+import { onMounted,ref } from 'vue';
 import router from '..';
 
-var auth=ref(Cookies.get("auth"));
+var username=ref()
 
 function login(){
   router.push('/login');
 }
 
-function logout(){
-  Cookies.remove("username");
-  location.reload();
+function register(){
+  router.push('/register');
 }
+
+function logout(){
+  localStorage.removeItem('session')
+  localStorage.removeItem('username')
+  location.reload()
+}
+
+onMounted(()=>{
+  username.value=localStorage.getItem('username')
+})
 </script>
 
 <style>
