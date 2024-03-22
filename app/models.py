@@ -19,6 +19,18 @@ class GroupRights(models.Model):
         db_table = 'group_rights'
 
 
+class Menu(models.Model):
+    id = models.IntegerField(primary_key=True)
+    label = models.CharField(max_length=45, blank=True, null=True)
+    icon = models.CharField(max_length=45, blank=True, null=True)
+    vis = models.CharField(max_length=45, blank=True, null=True)
+    index = models.CharField(max_length=45, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'menu'
+
+
 class Rights(models.Model):
     rightsid = models.IntegerField(primary_key=True)
     rightsname = models.CharField(max_length=45, blank=True, null=True)
@@ -29,7 +41,6 @@ class Rights(models.Model):
 
 
 class Token(models.Model):
-    id = models.IntegerField(primary_key=True)
     userid = models.CharField(max_length=45, blank=True, null=True)
     value = models.CharField(max_length=45, blank=True, null=True)
     expire_date = models.DateTimeField(blank=True, null=True)

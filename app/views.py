@@ -1,33 +1,11 @@
 from django.http import JsonResponse
-from app.models import User,Token
+from app.models import User,Menu,Token
 import hashlib,datetime
 
 def menu(request):
-    res=[{
-    'label':"主页",
-    'icon':'HomeFilled',
-    'vis':True,
-    'index':"/home",
-  },
-  {
-    'label':"用户管理",
-    'icon':'UserFilled',
-    'vis':True,
-    'index':"/user",
-  },
-  {
-    'label':"角色管理",
-    'icon':'MoreFilled',
-    'vis':True,
-    'index':"/role",
-  },
-  {
-    'label':"菜单管理",
-    'icon':'Operation',
-    'vis':True,
-    'index':"/menu",
-  }]
-    return JsonResponse(res,safe=False)
+    menu=list(Menu.objects.all().values())
+    print(menu)
+    return JsonResponse(menu,safe=False)
 
 def add_salt(text):
     salt=text[:5]
