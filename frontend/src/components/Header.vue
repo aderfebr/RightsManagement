@@ -33,8 +33,8 @@ function register(){
 }
 
 function logout(){
-  localStorage.removeItem('session')
   localStorage.removeItem('username')
+  localStorage.removeItem('token')
   location.reload()
 }
 

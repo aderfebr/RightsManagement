@@ -34,8 +34,8 @@ function submit(){
   },{
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
-    localStorage.setItem('session',res.data.session);
     localStorage.setItem('username',res.data.username);
+    localStorage.setItem('token',res.data.token);
   });
   router.push('/user');
 }
