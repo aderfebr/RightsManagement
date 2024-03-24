@@ -34,10 +34,15 @@ function submit(){
   },{
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
-    localStorage.setItem('username',res.data.username);
-    localStorage.setItem('token',res.data.token);
+    if(res.data.code==403) window.alert(res.data.msg);
+    else{
+      localStorage.setItem('username',res.data.username);
+      localStorage.setItem('token',res.data.token);
+    }
   });
-  router.push('/user');
+  setTimeout(() => {
+    router.push('/user');
+  }, 200);
 }
 </script>
 

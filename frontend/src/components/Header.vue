@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <span>
-      <span v-if="username==undefined">当前未登录</span>
+      <span v-if="!username">当前未登录</span>
       <span v-if="username">当前用户:&ensp;{{username}}</span>
       &ensp;
       <el-dropdown class="setting">
@@ -19,8 +19,9 @@
 </template>
 
 <script setup>
-import { onMounted,ref } from 'vue';
+import { getCurrentInstance,onMounted,ref } from 'vue';
 import router from '..';
+const {proxy} = getCurrentInstance()
 
 var username=ref()
 
@@ -33,9 +34,14 @@ function register(){
 }
 
 function logout(){
-  localStorage.removeItem('username')
-  localStorage.removeItem('token')
-  location.reload()
+  proxy.$http.post("http://localhost:8000/api/logout/",{
+    'userid':userid.value,
+  },{
+    headers: {'Content-Type': 'multipart/form-data'}
+  })
+  localStorage.removeItem('username');
+  localStorage.removeItem('token');
+  location.reload();
 }
 
 onMounted(()=>{

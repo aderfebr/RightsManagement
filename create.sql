@@ -1,8 +1,3 @@
-CREATE TABLE `group` (
-  `groupid` int NOT NULL,
-  `groupname` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`groupid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 CREATE TABLE `group_rights` (
   `id` int NOT NULL AUTO_INCREMENT,
   `groupid` varchar(45) DEFAULT NULL,
@@ -28,16 +23,15 @@ CREATE TABLE `token` (
   `value` varchar(45) DEFAULT NULL,
   `expire_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 CREATE TABLE `user` (
   `userid` int NOT NULL AUTO_INCREMENT,
   `username` varchar(45) DEFAULT NULL,
   `groupid` int DEFAULT NULL,
   `groupname` varchar(45) DEFAULT NULL,
   `password` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`userid`),
-  UNIQUE KEY `username_UNIQUE` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`userid`)
+) ENGINE=InnoDB CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `vis`, `index`) VALUES ('1', '主页', 'HomeFilled', 'True', '/home');
 INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `vis`, `index`) VALUES ('2', '用户管理', 'UserFilled', 'True', '/user');
 INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `vis`, `index`) VALUES ('3', '角色管理', 'MoreFilled', 'True', '/role');

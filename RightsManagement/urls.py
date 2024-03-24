@@ -19,6 +19,9 @@ from app import views
 
 urlpatterns = [
     path("api/menu/",views.menu),
+    path("api/user/",views.user),
     path("api/register/",views.register),
     path("api/login/",views.login),
+    path("api/logout/",views.logout),
+    path("api/changepwd/",views.changepwd)
 ]

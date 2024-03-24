@@ -3,9 +3,12 @@ from app.models import User,Menu,Token
 import hashlib,datetime
 
 def menu(request):
-    menu=list(Menu.objects.all().values())
-    print(menu)
-    return JsonResponse(menu,safe=False)
+    res=list(Menu.objects.all().values())
+    return JsonResponse(res,safe=False)
+
+def user(request):
+    res=list(User.objects.all().values())
+    return JsonResponse(res,safe=False)
 
 def add_salt(text):
     salt=text[:5]
@@ -47,10 +50,33 @@ def login(request):
         except User.DoesNotExist:
             return JsonResponse({
             'code':403,
-            'msg':'登录失败',
+            'msg':'密码错误',
             })
     else:
         return JsonResponse({
         'code':403,
         'msg':'用户不存在',
+        })
+
+def logout(request):
+    userid=request.POST.get("userid")
+    Token.objects.filter(userid=userid).delete()
+
+def changepwd(request):
+    userid=request.POST.get("userid")
+    oldpwd=request.POST.get("oldpwd")
+    newpwd=request.POST.get("newpwd")
+    try:
+        user=User.objects.get(userid=userid,password=add_salt(oldpwd))
+        user.password=add_salt(newpwd)
+        user.save()
+        Token.objects.filter(userid=user.userid).delete()
+        return JsonResponse({
+        'code':200,
+        'msg':'更改成功',
+        })
+    except User.DoesNotExist:
+        return JsonResponse({
+        'code':403,
+        'msg':'密码错误',
         })
