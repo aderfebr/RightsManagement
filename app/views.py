@@ -1,18 +1,47 @@
 from django.http import JsonResponse
-from app.models import User,Menu,Token
+from app.models import User,Menu,Token,GroupRights
 import hashlib,datetime
 
 def menu(request):
     res=list(Menu.objects.all().values())
     return JsonResponse(res,safe=False)
 
+def getauth(token,auth):
+    try:
+        data=Token.objects.get(value=token)
+        userid=data.userid
+        if datetime.datetime.now()>data.expire_date.replace(tzinfo=None):
+            return False
+    except Token.DoesNotExist:
+        return False
+    try:
+        groupid=User.objects.get(userid=userid).groupid
+    except User.DoesNotExist:
+        return False
+    rights=list(GroupRights.objects.filter(groupid=groupid).values())
+    for i in rights:
+        if i["rightsid"]==auth:
+            return True
+    return False
+
 def user(request):
-    res=list(User.objects.all().values())
-    return JsonResponse(res,safe=False)
+    token=request.POST.get("token")
+    if getauth(token,"1"):
+        res=list(User.objects.all().values())
+        return JsonResponse({
+            'data':res,
+            'code':200,
+            'msg':'查看用户成功',
+        })
+    else:
+        return JsonResponse({
+            'code':403,
+            'msg':'未授权',
+        })
 
 def add_salt(text):
     salt=text[:5]
-    md=hashlib.md5((str(text).join(salt)).encode())
+    md=hashlib.md5((text.join(salt)).encode())
     password=md.hexdigest()
     return password
 
@@ -41,7 +70,8 @@ def login(request):
         password=add_salt(password)
         try:
             user=User.objects.get(username=username,password=password)
-            token=add_salt(username)
+            Token.objects.filter(userid=user.userid).delete()
+            token=add_salt(username+str(datetime.datetime.now()))
             Token.objects.create(userid=user.userid,value=token,expire_date=datetime.datetime.now()+datetime.timedelta(days=1))
             return JsonResponse({
             'code':200,

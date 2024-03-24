@@ -58,7 +58,7 @@
         <Header></Header>
         <div class="title">用户管理</div>
         <el-divider></el-divider>
-        <div v-if="1">
+        <div v-if="auth">
           <el-row style="font-size: 25px;">
               <el-input size="large" v-model="input" style="width: 300px"/>&ensp;<el-button type="primary">搜索&ensp;<el-icon><Search /></el-icon></el-button>
           </el-row>
@@ -82,7 +82,7 @@
             </el-table-column>
           </el-table>
         </div>
-        <div v-if="0" style="width: 100%;text-align: center;font-size: 25px;color: red;">未授权!</div>
+        <div v-if="!auth" style="width: 100%;text-align: center;font-size: 25px;color: red;">未授权!</div>
     </div>
 </template>
 
@@ -90,6 +90,20 @@
 import { getCurrentInstance,onMounted, ref } from 'vue';
 import Header from '../components/Header.vue'
 const {proxy} = getCurrentInstance()
+
+var tableData=ref()
+var auth=ref(false)
+
+function get_user(){
+  proxy.$http.post("http://localhost:8000/api/user/",{
+    'token':localStorage.getItem("token"),
+  },{
+    headers: {'Content-Type': 'multipart/form-data'}
+  }).then((res)=>{
+    tableData.value=res.data.data;
+    if(res.data.code==200) auth.value=true;
+  });
+}
 
 var selected=ref();
 
@@ -123,15 +137,7 @@ function deletesubmit(){
   }).then((res)=>{
     if(res.data.code==403) window.alert(res.data.msg);
   });
-  location.reload()
-}
-
-var tableData=ref()
-
-function get_user(){
-  proxy.$http.get("http://localhost:8000/api/user/").then((res)=>{
-  tableData.value=res.data;
-  });
+  location.reload();
 }
 
 onMounted(()=>{

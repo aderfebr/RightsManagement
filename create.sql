@@ -36,3 +36,5 @@ INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `vis`, `index`) VA
 INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `vis`, `index`) VALUES ('2', '用户管理', 'UserFilled', 'True', '/user');
 INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `vis`, `index`) VALUES ('3', '角色管理', 'MoreFilled', 'True', '/group');
 INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `vis`, `index`) VALUES ('4', '菜单管理', 'Operation', 'True', '/menu');
+INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('1', '查看用户');
+INSERT INTO `rightsmanagement`.`group_rights` (`groupid`, `rightsid`) VALUES ('1', '1');

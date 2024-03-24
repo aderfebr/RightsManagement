@@ -20,7 +20,7 @@
           <input type="text" id="groupname" v-model="groupname" required>
         </div>
         <div class="form-actions">
-          <button @click="submit">登录</button>
+          <button @click="submit">注册</button>
         </div>
       </form>
     </div>
@@ -38,6 +38,10 @@ var groupid=ref();
 var groupname=ref();
 
 function submit(){
+  if(username||password||groupid||groupname){
+    window.alert("信息不能为空");
+  }
+  else{
   proxy.$http.post("http://localhost:8000/api/register/",{
     'username':username.value,
     'password':password.value,
@@ -48,7 +52,7 @@ function submit(){
   });
   setTimeout(() => {
     router.push('/user');
-  }, 200);
+  }, 200);}
 }
 </script>
 

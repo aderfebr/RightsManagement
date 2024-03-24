@@ -28,6 +28,10 @@ var username=ref("");
 var password=ref("");
 
 function submit(){
+  if(username||password){
+    window.alert("信息不能为空");
+  }
+  else{
   proxy.$http.post("http://localhost:8000/api/login/",{
     'username':username.value,
     'password':password.value,
@@ -42,7 +46,7 @@ function submit(){
   });
   setTimeout(() => {
     router.push('/user');
-  }, 200);
+  }, 200);}
 }
 </script>
 
