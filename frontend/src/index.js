@@ -3,7 +3,7 @@ const Login=()=> import('./components/Login.vue')
 const Register=()=> import('./components/Register.vue')
 const Nav=()=> import('./components/Nav.vue')
 const User=()=> import('./components/User.vue')
-const Role=()=> import('./components/Role.vue')
+const Group=()=> import('./components/Group.vue')
 const Menu=()=> import('./components/Menu.vue')
 
 const routes=[
@@ -23,8 +23,8 @@ const routes=[
             component: User,
             },
             {
-            path:'/role',
-            component: Role,
+            path:'/group',
+            component: Group,
             },
             {
             path:'/menu',

@@ -19,6 +19,8 @@ def add_salt(text):
 def register(request):
     username=request.POST.get("username")
     password=request.POST.get("password")
+    groupid=request.POST.get("groupid")
+    groupname=request.POST.get("groupname")
     if User.objects.filter(username=username):
         return JsonResponse({
         'code':403,
@@ -26,7 +28,7 @@ def register(request):
         })
     else:
         password=add_salt(password)
-        User.objects.create(username=username,password=password)
+        User.objects.create(username=username,password=password,groupid=groupid,groupname=groupname)
         return JsonResponse({
             'code':200,
             'msg':'注册成功',
@@ -59,8 +61,12 @@ def login(request):
         })
 
 def logout(request):
-    userid=request.POST.get("userid")
-    Token.objects.filter(userid=userid).delete()
+    token=request.POST.get("token")
+    Token.objects.filter(value=token).delete()
+    return JsonResponse({
+    'code':200,
+    'msg':'登出成功',
+    })
 
 def changepwd(request):
     userid=request.POST.get("userid")
@@ -80,3 +86,12 @@ def changepwd(request):
         'code':403,
         'msg':'密码错误',
         })
+    
+def deleteuser(request):
+    userid=request.POST.get("userid")
+    User.objects.get(userid=userid).delete()
+    Token.objects.filter(userid=userid).delete()
+    return JsonResponse({
+    'code':200,
+    'msg':'更改成功',
+    })

@@ -24,6 +24,7 @@ import router from '..';
 const {proxy} = getCurrentInstance()
 
 var username=ref()
+var token=ref()
 
 function login(){
   router.push('/login');
@@ -35,7 +36,7 @@ function register(){
 
 function logout(){
   proxy.$http.post("http://localhost:8000/api/logout/",{
-    'userid':userid.value,
+    'token':token.value,
   },{
     headers: {'Content-Type': 'multipart/form-data'}
   })
@@ -46,6 +47,7 @@ function logout(){
 
 onMounted(()=>{
   username.value=localStorage.getItem('username')
+  token.value=localStorage.getItem('token')
 })
 </script>
 

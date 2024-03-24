@@ -11,6 +11,14 @@
           <label for="password">密码:</label>
           <input type="password" id="password" v-model="password" required>
         </div>
+        <div class="form-group">
+          <label for="groupid">角色id:</label>
+          <input type="text" id="groupid" v-model="groupid" required>
+        </div>
+        <div class="form-group">
+          <label for="groupname">角色名:</label>
+          <input type="text" id="groupname" v-model="groupname" required>
+        </div>
         <div class="form-actions">
           <button @click="submit">登录</button>
         </div>
@@ -24,17 +32,23 @@ import { getCurrentInstance,ref } from 'vue';
 import router from '..';
 const {proxy} = getCurrentInstance()
 
-var username=ref("");
-var password=ref("");
+var username=ref();
+var password=ref();
+var groupid=ref();
+var groupname=ref();
 
 function submit(){
   proxy.$http.post("http://localhost:8000/api/register/",{
     'username':username.value,
     'password':password.value,
+    'groupid':groupid.value,
+    'groupname':groupname.value,
   },{
     headers: {'Content-Type': 'multipart/form-data'},
   });
-  router.push('/user');
+  setTimeout(() => {
+    router.push('/user');
+  }, 200);
 }
 </script>
 

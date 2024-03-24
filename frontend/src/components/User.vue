@@ -20,18 +20,18 @@
           width="500"
           :before-close="handleClose"
         >
-          <br>
-          <el-input
+          <span>请输入旧密码:</span>
+          <el-input 
+            style="padding: 5px 0;"
             v-model="oldpwd"
             type="password"
-            placeholder="请输入旧密码"
             show-password
           />
-          <br><br>
+          <span>请输入新密码:</span>
           <el-input
+            style="padding: 5px 0;"
             v-model="newpwd"
             type="password"
-            placeholder="请输入新密码"
             show-password
           />
           <template #footer>
@@ -51,7 +51,7 @@
           <template #footer>
             <div class="dialog-footer">
               <el-button @click="deleteVisible = false">取消</el-button>
-              <el-button type="success" @click="deleteVisible = false">确认</el-button>
+              <el-button type="success" @click="deleteVisible = false;deletesubmit();">确认</el-button>
             </div>
           </template>
         </el-dialog>
@@ -60,8 +60,7 @@
         <el-divider></el-divider>
         <div v-if="1">
           <el-row style="font-size: 25px;">
-              <el-col :span="20"><el-input size="large" v-model="input" style="width: 300px"/>&ensp;<el-button type="primary">搜索&ensp;<el-icon><Search /></el-icon></el-button></el-col>
-              <el-col :span="4" style="text-align: right;"><el-button type="success">新增&ensp;＋</el-button></el-col>
+              <el-input size="large" v-model="input" style="width: 300px"/>&ensp;<el-button type="primary">搜索&ensp;<el-icon><Search /></el-icon></el-button>
           </el-row>
           <br>
           <el-table :data="tableData" style="width: 100%">
@@ -112,16 +111,20 @@ function changesubmit(){
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
     if(res.data.code==403) window.alert(res.data.msg);
-    else{
-      localStorage.removeItem('username');
-      localStorage.removeItem('token');
-      location.reload();
-    }
-    selected=null;
   })
 }
 
 var deleteVisible=ref(false);
+function deletesubmit(){
+  proxy.$http.post("http://localhost:8000/api/deleteuser/",{
+    'userid':selected.value.userid,
+  },{
+    headers: {'Content-Type': 'multipart/form-data'}
+  }).then((res)=>{
+    if(res.data.code==403) window.alert(res.data.msg);
+  });
+  location.reload()
+}
 
 var tableData=ref()
 

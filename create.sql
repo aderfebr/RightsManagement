@@ -34,5 +34,5 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `vis`, `index`) VALUES ('1', '主页', 'HomeFilled', 'True', '/home');
 INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `vis`, `index`) VALUES ('2', '用户管理', 'UserFilled', 'True', '/user');
-INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `vis`, `index`) VALUES ('3', '角色管理', 'MoreFilled', 'True', '/role');
+INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `vis`, `index`) VALUES ('3', '角色管理', 'MoreFilled', 'True', '/group');
 INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `vis`, `index`) VALUES ('4', '菜单管理', 'Operation', 'True', '/menu');
