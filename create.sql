@@ -13,8 +13,8 @@ CREATE TABLE `menu` (
   `id` int NOT NULL,
   `label` varchar(45) DEFAULT NULL,
   `icon` varchar(45) DEFAULT NULL,
-  `vis` varchar(45) DEFAULT NULL,
   `index` varchar(45) DEFAULT NULL,
+  `vis` tinyint DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 CREATE TABLE `rights` (
@@ -37,10 +37,10 @@ CREATE TABLE `user` (
   `password` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `vis`, `index`) VALUES ('1', '主页', 'HomeFilled', 'True', '/home');
-INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `vis`, `index`) VALUES ('2', '用户管理', 'UserFilled', 'True', '/user');
-INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `vis`, `index`) VALUES ('3', '角色管理', 'MoreFilled', 'True', '/group');
-INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `vis`, `index`) VALUES ('4', '菜单管理', 'Operation', 'True', '/menu');
+INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `index`, `vis`) VALUES ('1', '主页', 'HomeFilled', '/home', '1');
+INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `index`, `vis`) VALUES ('2', '用户管理', 'UserFilled', '/user', '1');
+INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `index`, `vis`) VALUES ('3', '角色管理', 'MoreFilled', '/group', '1');
+INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `index`, `vis`) VALUES ('4', '菜单管理', 'Operation', '/menu', '1');
 INSERT INTO `rightsmanagement`.`group` (`groupid`, `groupname`) VALUES ('1', 'student');
 INSERT INTO `rightsmanagement`.`group` (`groupid`, `groupname`) VALUES ('2', 'teacher');
 INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('1', '查看用户');

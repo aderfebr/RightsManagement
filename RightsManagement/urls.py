@@ -18,12 +18,13 @@ from django.urls import path
 from app import views
 
 urlpatterns = [
-    path("api/menu/",views.menu),
+    path("api/getmenu/",views.getmenu),
     path("api/register/",views.register),
     path("api/getgroup/",views.getgroup),
     path("api/login/",views.login),
     path("api/logout/",views.logout),
     path("api/getuser/",views.getuser),
-    path("api/deleteuser/",views.deleteuser),
+    path("api/edituser/",views.edituser),
     path("api/changepwd/",views.changepwd),
+    path("api/deleteuser/",views.deleteuser),
 ]

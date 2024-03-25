@@ -31,14 +31,14 @@ const {proxy} = getCurrentInstance()
 var activeIndex=useRouter().currentRoute.value.path;
 var index=ref()
 
-function get_menu(){
-  proxy.$http.get("http://localhost:8000/api/menu/").then((res)=>{
+function getmenu(){
+  proxy.$http.get("http://localhost:8000/api/getmenu/").then((res)=>{
   index.value=res.data;
   });
 }
 
 onMounted(()=>{
-  get_menu();
+  getmenu();
 })
 </script>
 

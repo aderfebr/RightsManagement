@@ -6,11 +6,34 @@
           width="500"
           :before-close="handleClose"
         >
-          <span>This is a message</span>
+          <span>ID:</span>
+          <el-input 
+            style="padding: 5px 0;"
+            v-model="edited.userid"
+            disabled
+          />
+          <span>用户名:</span>
+          <el-input 
+            style="padding: 5px 0;"
+            v-model="edited.username"
+          />
+          <span>角色:</span>
+          <el-select
+            style="padding: 5px 0;"
+            v-model="edited.groupid"
+            placeholder=""
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.groupid"
+              :label="item.groupname"
+              :value="item.groupid"
+            />
+          </el-select>
           <template #footer>
             <div class="dialog-footer">
               <el-button @click="editVisible = false">取消</el-button>
-              <el-button type="success" @click="editVisible = false">确认</el-button>
+              <el-button type="success" @click="editVisible = false;editsubmit();">确认</el-button>
             </div>
           </template>
         </el-dialog>
@@ -75,8 +98,8 @@
             </el-table-column>
             <el-table-column label="操作">
               <template #default="scope">
-                <el-button type="warning" @click="editVisible=true;selected=scope.row;">编辑信息</el-button>
-                <el-button type="primary" @click="changeclear();changeVisible=true;selected=scope.row;">更改密码</el-button>
+                <el-button type="warning" @click="editVisible=true;selected=scope.row;editclear();">编辑信息</el-button>
+                <el-button type="primary" @click="changeVisible=true;selected=scope.row;changeclear();">更改密码</el-button>
                 <el-button type="danger" @click="deleteVisible=true;selected=scope.row;">删除</el-button>
               </template>
             </el-table-column>
@@ -91,6 +114,7 @@ import { getCurrentInstance,onMounted, ref } from 'vue';
 import Header from '../components/Header.vue'
 const {proxy} = getCurrentInstance()
 
+var options=ref();
 var tableData=ref()
 var auth=ref(false)
 
@@ -105,9 +129,33 @@ function getuser(){
   });
 }
 
+function getgroup(){
+  proxy.$http.get("http://localhost:8000/api/getgroup/").then((res)=>{
+    options.value=res.data.data;
+  })
+}
+
 var selected=ref();
 
+var edited=ref({});
 var editVisible=ref(false);
+function editclear(){
+  edited.value=JSON.parse(JSON.stringify(selected.value))
+}
+function editsubmit(){
+  proxy.$http.post("http://localhost:8000/api/edituser/",{
+    'userid':edited.value.userid,
+    'username':edited.value.username,
+    'groupid':edited.value.groupid,
+  },{
+    headers: {'Content-Type': 'multipart/form-data'}
+  }).then((res)=>{
+    if(res.data.code==403) window.alert(res.data.msg);
+  });
+  setTimeout(() => {
+    getuser();
+  }, 200);
+}
 
 var changeVisible=ref(false);
 var oldpwd=ref();
@@ -142,6 +190,7 @@ function deletesubmit(){
 
 onMounted(()=>{
   getuser();
+  getgroup();
 })
 </script>
 

@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from app.models import Group,GroupRights,Menu,Token,User
 import hashlib,datetime
 
-def menu(request):
+def getmenu(request):
     res=list(Menu.objects.all().values())
     return JsonResponse(res,safe=False)
 
@@ -104,6 +104,16 @@ def getuser(request):
             'code':403,
             'msg':'未授权',
         })
+
+def edituser(request):
+    userid=request.POST.get("userid")
+    username=request.POST.get("username")
+    groupid=request.POST.get("groupid")
+    User.objects.filter(userid=userid).update(username=username,groupid=groupid,groupname=Group.objects.get(groupid=groupid).groupname)
+    return JsonResponse({
+        'code':200,
+        'msg':'修改成功',
+    })
 
 def changepwd(request):
     userid=request.POST.get("userid")
