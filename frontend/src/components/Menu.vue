@@ -9,7 +9,7 @@
           </template>
         </el-tree> -->
         <div v-for="item in index"><el-icon><component :is="item.icon" /></el-icon>&ensp;{{ item.label }}&ensp;<el-switch v-model="item.vis"/></div>
-      <br><el-button type="success" @click="submit">确认&ensp;<el-icon><Check /></el-icon></el-button>
+      <br><el-button type="success" @click="changemenu">确认&ensp;<el-icon><Check /></el-icon></el-button>
     </div>
 </template>
 
@@ -26,8 +26,14 @@ function getmenu(){
   });
 }
 
-function submit(){
-  console.log(index)
+function changemenu(){
+  proxy.$http.post("http://localhost:8000/api/changemenu/",{
+    'index':JSON.stringify(index.value),
+  },{
+    headers: {'Content-Type': 'multipart/form-data'}
+  }).then((res)=>{
+    if(res.data.code==403) window.alert(res.data.msg);
+  });
 }
 
 onMounted(()=>{

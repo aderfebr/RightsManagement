@@ -1,10 +1,21 @@
 from django.http import JsonResponse
 from app.models import Group,GroupRights,Menu,Token,User
-import hashlib,datetime
+import hashlib,datetime,json
 
 def getmenu(request):
     res=list(Menu.objects.all().values())
     return JsonResponse(res,safe=False)
+
+def changemenu(request):
+    index=request.POST.get("index")
+    index=json.loads(index)
+    for i in index:
+        print(i)
+        Menu.objects.filter(id=i["id"]).update(vis=i["vis"])
+    return JsonResponse({
+        'code':200,
+        'msg':'修改菜单成功',
+    })
 
 def getauth(token,auth):
     try:
@@ -49,11 +60,7 @@ def register(request):
     
 def getgroup(request):
     res=list(Group.objects.all().values())
-    return JsonResponse({
-        'data':res,
-        'code':200,
-        'msg':'查看角色成功',
-    })
+    return JsonResponse(res,safe=False)
 
 def login(request):
     username=request.POST.get("username")
@@ -112,7 +119,7 @@ def edituser(request):
     User.objects.filter(userid=userid).update(username=username,groupid=groupid,groupname=Group.objects.get(groupid=groupid).groupname)
     return JsonResponse({
         'code':200,
-        'msg':'修改成功',
+        'msg':'修改用户成功',
     })
 
 def changepwd(request):
