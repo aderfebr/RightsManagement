@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from app.models import Group,GroupRights,Menu,Token,User
+from app.models import Group,GroupRights,Menu,Rights,Token,User
 import hashlib,datetime,json
 
 def getmenu(request):
@@ -10,7 +10,6 @@ def changemenu(request):
     index=request.POST.get("index")
     index=json.loads(index)
     for i in index:
-        print(i)
         Menu.objects.filter(id=i["id"]).update(vis=i["vis"])
     return JsonResponse({
         'code':200,
@@ -148,4 +147,30 @@ def deleteuser(request):
     return JsonResponse({
     'code':200,
     'msg':'更改成功',
+    })
+
+def getrights(request):
+    groupid=request.POST.get("groupid")
+    group=GroupRights.objects.filter(groupid=groupid).values()
+    rights=[]
+    for i in group:
+        rights.append(int(i["rightsid"]))
+    res=list(Rights.objects.all().values())
+    return JsonResponse({
+        'data':res,
+        'rights':rights,
+        'code':200,
+        'msg':'查看角色成功',
+    })
+
+def editrights(request):
+    groupid=request.POST.get("groupid")
+    rights=request.POST.get("rights")
+    rights=json.loads(rights)
+    GroupRights.objects.filter(groupid=groupid).delete()
+    for i in rights:
+        GroupRights.objects.create(groupid=groupid,rightsid=i)
+    return JsonResponse({
+        'code':200,
+        'msg':'修改角色成功',
     })

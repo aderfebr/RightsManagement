@@ -28,4 +28,6 @@ urlpatterns = [
     path("api/edituser/",views.edituser),
     path("api/changepwd/",views.changepwd),
     path("api/deleteuser/",views.deleteuser),
+    path("api/getrights/",views.getrights),
+    path("api/editrights/",views.editrights),
 ]

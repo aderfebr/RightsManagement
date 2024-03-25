@@ -13,7 +13,7 @@
         </div>
         <div class="form-actions">
           <el-button @click="back()">返回</el-button>
-          <el-button type="primary" @click="submit()">注册</el-button>
+          <el-button type="primary" @click="submit()">登录</el-button>
         </div>
       </form>
     </div>

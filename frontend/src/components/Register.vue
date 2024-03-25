@@ -43,11 +43,11 @@ const {proxy} = getCurrentInstance()
 var options=ref();
 var username=ref("");
 var password=ref("");
-var groupid=ref("");
+var groupid=ref();
 
 function getgroup(){
   proxy.$http.get("http://localhost:8000/api/getgroup/").then((res)=>{
-    options.value=res.data.data
+    options.value=res.data
   })
 }
 

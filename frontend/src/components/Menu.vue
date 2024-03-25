@@ -34,6 +34,7 @@ function changemenu(){
   }).then((res)=>{
     if(res.data.code==403) window.alert(res.data.msg);
   });
+  location.reload();
 }
 
 onMounted(()=>{

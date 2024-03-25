@@ -124,8 +124,10 @@ function getuser(){
   },{
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
-    tableData.value=res.data.data;
-    if(res.data.code==200) auth.value=true;
+    if(res.data.code==200){
+      tableData.value=res.data.data;
+      auth.value=true;
+    }
   });
 }
 

@@ -4,61 +4,76 @@
         <div class="title">角色管理</div>
         <el-divider></el-divider>
         <el-select
-          v-model="role"
+          v-model="groupid"
           placeholder="请选择角色"
           size="large"
           style="width: 300px"
         >
           <el-option
-            v-for="item in roles"
-            :key="item.key"
-            :label="item.label"
-            :value="item.key"
+            v-for="item in options"
+            :key="item.groupid"
+            :label="item.groupname"
+            :value="item.groupid"
           />
         </el-select>
-        &ensp;<el-button type="warning" @click="query">查询&ensp;<el-icon><Search /></el-icon></el-button><br><br>
-        <el-transfer v-model="auth_check" :data="auth" :titles="['未分配权限', '已分配权限']"/>
-        <br><el-button type="success" @click="submit">确认&ensp;<el-icon><Check /></el-icon></el-button>
+        &ensp;<el-button type="warning" @click="getrights()">查询&ensp;<el-icon><Search /></el-icon></el-button><br><br>
+        <el-transfer
+          v-model="rightscheck"
+          :props="{
+            key: 'rightsid',
+            label: 'rightsname',
+          }"
+          :data="rights"
+          :titles="['未分配权限', '已分配权限']"
+        />
+        <br><el-button type="success" @click="editrights()">确认&ensp;<el-icon><Check /></el-icon></el-button>
     </div>
 </template>
 
 <script setup>
 import Header from '../components/Header.vue'
-import { ref } from 'vue'
+import { getCurrentInstance,onMounted,ref } from 'vue';
+const {proxy} = getCurrentInstance()
 
-const role=ref('');
+var options=ref();
+var groupid=ref();
+var rights=ref();
+var rightscheck=ref();
 
-var auth_check=[1]
-
-var roles=[
-  {
-    key:0,
-    label:'student',
-  },
-  {
-    key:1,
-    label:'teacher',
-  },
-];
-
-var auth=[
-  {
-    key:0,
-    label:'访问用户管理',
-  },
-  {
-    key:1,
-    label:'访问角色管理',
-  },
-  {
-    key:2,
-    label:'访问菜单管理',
-  },
-]
-
-function query(){
-  console.log(role.key)
+function getgroup(){
+  proxy.$http.get("http://localhost:8000/api/getgroup/").then((res)=>{
+    options.value=res.data
+  });
 }
+
+function getrights(){
+  proxy.$http.post("http://localhost:8000/api/getrights/",{
+    'groupid':groupid.value,
+  },{
+    headers: {'Content-Type': 'multipart/form-data'}
+  }).then((res)=>{
+    if(res.data.code==403) window.alert(res.data.msg);
+    else{
+      rights.value=res.data.data;
+      rightscheck.value=res.data.rights;
+    }
+  });
+}
+
+function editrights(){
+  proxy.$http.post("http://localhost:8000/api/editrights/",{
+    'groupid':groupid.value,
+    'rights':JSON.stringify(rightscheck.value),
+  },{
+    headers: {'Content-Type': 'multipart/form-data'}
+  }).then((res)=>{
+    if(res.data.code==403) window.alert(res.data.msg);
+  });
+}
+
+onMounted(()=>{
+  getgroup();
+})
 </script>
 
 <style scoped>
