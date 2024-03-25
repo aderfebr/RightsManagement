@@ -1,6 +1,15 @@
 from django.db import models
 
 
+class Group(models.Model):
+    groupid = models.IntegerField(primary_key=True)
+    groupname = models.CharField(max_length=45, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'group'
+
+
 class GroupRights(models.Model):
     groupid = models.CharField(max_length=45, blank=True, null=True)
     rightsid = models.CharField(max_length=45, blank=True, null=True)

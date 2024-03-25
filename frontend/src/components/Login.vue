@@ -12,7 +12,8 @@
           <input type="password" id="password" v-model="password" required>
         </div>
         <div class="form-actions">
-          <button @click="submit">登录</button>
+          <el-button @click="back()">返回</el-button>
+          <el-button type="primary" @click="submit()">注册</el-button>
         </div>
       </form>
     </div>
@@ -28,7 +29,7 @@ var username=ref("");
 var password=ref("");
 
 function submit(){
-  if(username||password){
+  if(username.value==""||password.value==""){
     window.alert("信息不能为空");
   }
   else{
@@ -47,6 +48,10 @@ function submit(){
   setTimeout(() => {
     router.push('/user');
   }, 200);}
+}
+
+function back(){
+  router.push('/user');
 }
 </script>
 
@@ -105,25 +110,6 @@ input[type="password"] {
 
 .form-actions {
   text-align: right;
-}
-
-button {
-  padding: 10px 20px;
-  background-color: #409eff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background-color: #555;
-}
-
-a{
-  color: #fff;
-  text-decoration: none;
 }
 </style>
 

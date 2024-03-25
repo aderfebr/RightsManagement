@@ -12,15 +12,23 @@
           <input type="password" id="password" v-model="password" required>
         </div>
         <div class="form-group">
-          <label for="groupid">角色id:</label>
-          <input type="text" id="groupid" v-model="groupid" required>
-        </div>
-        <div class="form-group">
-          <label for="groupname">角色名:</label>
-          <input type="text" id="groupname" v-model="groupname" required>
+          <label for="groupid">角色:</label>
+          <el-select
+            v-model="groupid"
+            size="large"
+            placeholder=""
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.groupid"
+              :label="item.groupname"
+              :value="item.groupid"
+            />
+          </el-select>
         </div>
         <div class="form-actions">
-          <button @click="submit">注册</button>
+          <el-button @click="back()">返回</el-button>
+          <el-button type="primary" @click="submit()">注册</el-button>
         </div>
       </form>
     </div>
@@ -28,17 +36,23 @@
 </template>
 
 <script setup>
-import { getCurrentInstance,ref } from 'vue';
+import { getCurrentInstance,onMounted,ref } from 'vue';
 import router from '..';
 const {proxy} = getCurrentInstance()
 
-var username=ref();
-var password=ref();
-var groupid=ref();
-var groupname=ref();
+var options=ref();
+var username=ref("");
+var password=ref("");
+var groupid=ref("");
+
+function getgroup(){
+  proxy.$http.get("http://localhost:8000/api/getgroup/").then((res)=>{
+    options.value=res.data.data
+  })
+}
 
 function submit(){
-  if(username||password||groupid||groupname){
+  if(username.value==""||password.value==""||groupid.value==""){
     window.alert("信息不能为空");
   }
   else{
@@ -46,14 +60,23 @@ function submit(){
     'username':username.value,
     'password':password.value,
     'groupid':groupid.value,
-    'groupname':groupname.value,
   },{
     headers: {'Content-Type': 'multipart/form-data'},
+  }).then((res)=>{
+    if(res.data.code==403) window.alert(res.data.msg);
   });
   setTimeout(() => {
     router.push('/user');
   }, 200);}
 }
+
+function back(){
+  router.push('/user');
+}
+
+onMounted(()=>{
+  getgroup();
+})
 </script>
 
 <style scoped>
@@ -111,25 +134,6 @@ input[type="password"] {
 
 .form-actions {
   text-align: right;
-}
-
-button {
-  padding: 10px 20px;
-  background-color: #409eff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background-color: #555;
-}
-
-a{
-  color: #fff;
-  text-decoration: none;
 }
 </style>
 

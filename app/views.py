@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from app.models import User,Menu,Token,GroupRights
+from app.models import Group,GroupRights,Menu,Token,User
 import hashlib,datetime
 
 def menu(request):
@@ -24,21 +24,6 @@ def getauth(token,auth):
             return True
     return False
 
-def user(request):
-    token=request.POST.get("token")
-    if getauth(token,"1"):
-        res=list(User.objects.all().values())
-        return JsonResponse({
-            'data':res,
-            'code':200,
-            'msg':'查看用户成功',
-        })
-    else:
-        return JsonResponse({
-            'code':403,
-            'msg':'未授权',
-        })
-
 def add_salt(text):
     salt=text[:5]
     md=hashlib.md5((text.join(salt)).encode())
@@ -49,7 +34,6 @@ def register(request):
     username=request.POST.get("username")
     password=request.POST.get("password")
     groupid=request.POST.get("groupid")
-    groupname=request.POST.get("groupname")
     if User.objects.filter(username=username):
         return JsonResponse({
         'code':403,
@@ -57,11 +41,19 @@ def register(request):
         })
     else:
         password=add_salt(password)
-        User.objects.create(username=username,password=password,groupid=groupid,groupname=groupname)
+        User.objects.create(username=username,password=password,groupid=groupid,groupname=Group.objects.get(groupid=groupid).groupname)
         return JsonResponse({
             'code':200,
             'msg':'注册成功',
         })
+    
+def getgroup(request):
+    res=list(Group.objects.all().values())
+    return JsonResponse({
+        'data':res,
+        'code':200,
+        'msg':'查看角色成功',
+    })
 
 def login(request):
     username=request.POST.get("username")
@@ -97,6 +89,21 @@ def logout(request):
     'code':200,
     'msg':'登出成功',
     })
+
+def getuser(request):
+    token=request.POST.get("token")
+    if getauth(token,"1"):
+        res=list(User.objects.all().values())
+        return JsonResponse({
+            'data':res,
+            'code':200,
+            'msg':'查看用户成功',
+        })
+    else:
+        return JsonResponse({
+            'code':403,
+            'msg':'未授权',
+        })
 
 def changepwd(request):
     userid=request.POST.get("userid")

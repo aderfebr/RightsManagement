@@ -1,3 +1,8 @@
+CREATE TABLE `group` (
+  `groupid` int NOT NULL,
+  `groupname` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`groupid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 CREATE TABLE `group_rights` (
   `id` int NOT NULL AUTO_INCREMENT,
   `groupid` varchar(45) DEFAULT NULL,
@@ -36,5 +41,7 @@ INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `vis`, `index`) VA
 INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `vis`, `index`) VALUES ('2', '用户管理', 'UserFilled', 'True', '/user');
 INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `vis`, `index`) VALUES ('3', '角色管理', 'MoreFilled', 'True', '/group');
 INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `vis`, `index`) VALUES ('4', '菜单管理', 'Operation', 'True', '/menu');
+INSERT INTO `rightsmanagement`.`group` (`groupid`, `groupname`) VALUES ('1', 'student');
+INSERT INTO `rightsmanagement`.`group` (`groupid`, `groupname`) VALUES ('2', 'teacher');
 INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('1', '查看用户');
 INSERT INTO `rightsmanagement`.`group_rights` (`groupid`, `rightsid`) VALUES ('1', '1');

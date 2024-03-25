@@ -94,8 +94,8 @@ const {proxy} = getCurrentInstance()
 var tableData=ref()
 var auth=ref(false)
 
-function get_user(){
-  proxy.$http.post("http://localhost:8000/api/user/",{
+function getuser(){
+  proxy.$http.post("http://localhost:8000/api/getuser/",{
     'token':localStorage.getItem("token"),
   },{
     headers: {'Content-Type': 'multipart/form-data'}
@@ -141,7 +141,7 @@ function deletesubmit(){
 }
 
 onMounted(()=>{
-  get_user();
+  getuser();
 })
 </script>
 
