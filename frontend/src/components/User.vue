@@ -133,7 +133,7 @@ function getuser(){
 
 function getgroup(){
   proxy.$http.get("http://localhost:8000/api/getgroup/").then((res)=>{
-    options.value=res.data.data;
+    options.value=res.data;
   })
 }
 
@@ -149,6 +149,7 @@ function editsubmit(){
     'userid':edited.value.userid,
     'username':edited.value.username,
     'groupid':edited.value.groupid,
+    'token':localStorage.getItem("token"),
   },{
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
@@ -171,6 +172,7 @@ function changesubmit(){
     'userid':selected.value.userid,
     'oldpwd':oldpwd.value,
     'newpwd':newpwd.value,
+    'token':localStorage.getItem("token"),
   },{
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
@@ -182,12 +184,13 @@ var deleteVisible=ref(false);
 function deletesubmit(){
   proxy.$http.post("http://localhost:8000/api/deleteuser/",{
     'userid':selected.value.userid,
+    'token':localStorage.getItem("token"),
   },{
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
     if(res.data.code==403) window.alert(res.data.msg);
+    location.reload();
   });
-  location.reload();
 }
 
 onMounted(()=>{

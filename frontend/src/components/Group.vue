@@ -49,6 +49,7 @@ function getgroup(){
 function getrights(){
   proxy.$http.post("http://localhost:8000/api/getrights/",{
     'groupid':groupid.value,
+    'token':localStorage.getItem("token"),
   },{
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
@@ -64,6 +65,7 @@ function editrights(){
   proxy.$http.post("http://localhost:8000/api/editrights/",{
     'groupid':groupid.value,
     'rights':JSON.stringify(rightscheck.value),
+    'token':localStorage.getItem("token"),
   },{
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{

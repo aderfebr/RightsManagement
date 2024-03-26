@@ -19,7 +19,7 @@ from app import views
 
 urlpatterns = [
     path("api/getmenu/",views.getmenu),
-    path("api/changemenu/",views.changemenu),
+    path("api/editmenu/",views.editmenu),
     path("api/register/",views.register),
     path("api/getgroup/",views.getgroup),
     path("api/login/",views.login),

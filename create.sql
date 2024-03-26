@@ -46,5 +46,8 @@ INSERT INTO `rightsmanagement`.`group` (`groupid`, `groupname`) VALUES ('2', 'te
 INSERT INTO `rightsmanagement`.`group` (`groupid`, `groupname`) VALUES ('3', 'admin');
 INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('1', '查看用户');
 INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('2', '修改用户');
-INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('3', '修改角色');
-INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('4', '修改菜单');
+INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('3', '修改密码');
+INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('4', '删除用户');
+INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('5', '查看权限');
+INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('6', '修改权限');
+INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('7', '修改菜单');

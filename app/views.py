@@ -6,15 +6,22 @@ def getmenu(request):
     res=list(Menu.objects.all().values())
     return JsonResponse(res,safe=False)
 
-def changemenu(request):
+def editmenu(request):
     index=request.POST.get("index")
-    index=json.loads(index)
-    for i in index:
-        Menu.objects.filter(id=i["id"]).update(vis=i["vis"])
-    return JsonResponse({
-        'code':200,
-        'msg':'修改菜单成功',
-    })
+    token=request.POST.get("token")
+    if getauth(token,"7"):
+        index=json.loads(index)
+        for i in index:
+            Menu.objects.filter(id=i["id"]).update(vis=i["vis"])
+        return JsonResponse({
+            'code':200,
+            'msg':'修改菜单成功',
+        })
+    else:
+        return JsonResponse({
+            'code':403,
+            'msg':'未授权',
+        })
 
 def getauth(token,auth):
     try:
@@ -115,62 +122,99 @@ def edituser(request):
     userid=request.POST.get("userid")
     username=request.POST.get("username")
     groupid=request.POST.get("groupid")
-    User.objects.filter(userid=userid).update(username=username,groupid=groupid,groupname=Group.objects.get(groupid=groupid).groupname)
-    return JsonResponse({
-        'code':200,
-        'msg':'修改用户成功',
-    })
+    token=request.POST.get("token")
+    if getauth(token,"2"):
+        User.objects.filter(userid=userid).update(username=username,groupid=groupid,groupname=Group.objects.get(groupid=groupid).groupname)
+        Token.objects.filter(userid=userid).delete()
+        return JsonResponse({
+            'code':200,
+            'msg':'修改用户成功',
+        })
+    else:
+        return JsonResponse({
+            'code':403,
+            'msg':'未授权',
+        })
 
 def changepwd(request):
     userid=request.POST.get("userid")
     oldpwd=request.POST.get("oldpwd")
     newpwd=request.POST.get("newpwd")
-    try:
-        user=User.objects.get(userid=userid,password=add_salt(oldpwd))
-        user.password=add_salt(newpwd)
-        user.save()
-        Token.objects.filter(userid=user.userid).delete()
+    token=request.POST.get("token")
+    if getauth(token,"3"):
+        try:
+            user=User.objects.get(userid=userid,password=add_salt(oldpwd))
+            user.password=add_salt(newpwd)
+            user.save()
+            Token.objects.filter(userid=user.userid).delete()
+            return JsonResponse({
+            'code':200,
+            'msg':'更改成功',
+            })
+        except User.DoesNotExist:
+            return JsonResponse({
+            'code':403,
+            'msg':'密码错误',
+            })
+    else:
+        return JsonResponse({
+            'code':403,
+            'msg':'未授权',
+        })
+
+    
+def deleteuser(request):
+    userid=request.POST.get("userid")
+    token=request.POST.get("token")
+    if getauth(token,"4"):
+        User.objects.get(userid=userid).delete()
+        Token.objects.filter(userid=userid).delete()
         return JsonResponse({
         'code':200,
         'msg':'更改成功',
         })
-    except User.DoesNotExist:
+    else:
         return JsonResponse({
-        'code':403,
-        'msg':'密码错误',
+            'code':403,
+            'msg':'未授权',
         })
-    
-def deleteuser(request):
-    userid=request.POST.get("userid")
-    User.objects.get(userid=userid).delete()
-    Token.objects.filter(userid=userid).delete()
-    return JsonResponse({
-    'code':200,
-    'msg':'更改成功',
-    })
 
 def getrights(request):
     groupid=request.POST.get("groupid")
-    group=GroupRights.objects.filter(groupid=groupid).values()
-    rights=[]
-    for i in group:
-        rights.append(int(i["rightsid"]))
-    res=list(Rights.objects.all().values())
-    return JsonResponse({
-        'data':res,
-        'rights':rights,
-        'code':200,
-        'msg':'查看角色成功',
-    })
+    token=request.POST.get("token")
+    if getauth(token,"5"):
+        group=GroupRights.objects.filter(groupid=groupid).values()
+        rights=[]
+        for i in group:
+            rights.append(int(i["rightsid"]))
+        res=list(Rights.objects.all().values())
+        return JsonResponse({
+            'data':res,
+            'rights':rights,
+            'code':200,
+            'msg':'查看角色成功',
+        })
+    else:
+        return JsonResponse({
+            'code':403,
+            'msg':'未授权',
+        })
 
 def editrights(request):
     groupid=request.POST.get("groupid")
     rights=request.POST.get("rights")
     rights=json.loads(rights)
-    GroupRights.objects.filter(groupid=groupid).delete()
-    for i in rights:
-        GroupRights.objects.create(groupid=groupid,rightsid=i)
-    return JsonResponse({
-        'code':200,
-        'msg':'修改角色成功',
-    })
+    token=request.POST.get("token")
+    if getauth(token,"6"):
+        GroupRights.objects.filter(groupid=groupid).delete()
+        for i in rights:
+            GroupRights.objects.create(groupid=groupid,rightsid=i)
+        return JsonResponse({
+            'code':200,
+            'msg':'修改角色成功',
+        })
+    else:
+        return JsonResponse({
+            'code':403,
+            'msg':'未授权',
+        })
