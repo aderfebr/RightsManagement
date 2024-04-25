@@ -11,21 +11,6 @@
           <label for="password">密码:</label>
           <input type="password" id="password" v-model="password" required>
         </div>
-        <div class="form-group">
-          <label for="groupid">角色:</label>
-          <el-select
-            v-model="groupid"
-            size="large"
-            placeholder=""
-          >
-            <el-option
-              v-for="item in options"
-              :key="item.groupid"
-              :label="item.groupname"
-              :value="item.groupid"
-            />
-          </el-select>
-        </div>
         <div class="form-actions">
           <el-button @click="back()">返回</el-button>
           <el-button type="primary" @click="submit()">注册</el-button>
@@ -40,26 +25,17 @@ import { getCurrentInstance,onMounted,ref } from 'vue';
 import router from '..';
 const {proxy} = getCurrentInstance()
 
-var options=ref();
 var username=ref("");
 var password=ref("");
-var groupid=ref();
-
-function getgroup(){
-  proxy.$http.get("http://localhost:8000/api/getgroup/").then((res)=>{
-    options.value=res.data
-  })
-}
 
 function submit(){
-  if(username.value==""||password.value==""||groupid.value==""){
+  if(username.value==""||password.value==""){
     window.alert("信息不能为空");
   }
   else{
   proxy.$http.post("http://localhost:8000/api/register/",{
     'username':username.value,
     'password':password.value,
-    'groupid':groupid.value,
   },{
     headers: {'Content-Type': 'multipart/form-data'},
   }).then((res)=>{
@@ -73,10 +49,6 @@ function submit(){
 function back(){
   router.push('/user');
 }
-
-onMounted(()=>{
-  getgroup();
-})
 </script>
 
 <style scoped>

@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from app.models import Group,GroupRights,Menu,Rights,Token,User
+from app.models import Group,GroupRights,Menu,Rights,Token,User,UserGroup
 import hashlib,datetime,json
 
 def getmenu(request):
@@ -9,7 +9,7 @@ def getmenu(request):
 def editmenu(request):
     index=request.POST.get("index")
     token=request.POST.get("token")
-    if getauth(token,"7"):
+    if getauth(token,7):
         index=json.loads(index)
         for i in index:
             Menu.objects.filter(id=i["id"]).update(vis=i["vis"])
@@ -32,8 +32,8 @@ def getauth(token,auth):
     except Token.DoesNotExist:
         return False
     try:
-        groupid=User.objects.get(userid=userid).groupid
-    except User.DoesNotExist:
+        groupid=UserGroup.objects.get(userid=userid).groupid
+    except UserGroup.DoesNotExist:
         return False
     rights=list(GroupRights.objects.filter(groupid=groupid).values())
     for i in rights:
@@ -50,7 +50,6 @@ def add_salt(text):
 def register(request):
     username=request.POST.get("username")
     password=request.POST.get("password")
-    groupid=request.POST.get("groupid")
     if User.objects.filter(username=username):
         return JsonResponse({
         'code':403,
@@ -58,15 +57,11 @@ def register(request):
         })
     else:
         password=add_salt(password)
-        User.objects.create(username=username,password=password,groupid=groupid,groupname=Group.objects.get(groupid=groupid).groupname)
+        User.objects.create(username=username,password=password)
         return JsonResponse({
             'code':200,
             'msg':'注册成功',
         })
-    
-def getgroup(request):
-    res=list(Group.objects.all().values())
-    return JsonResponse(res,safe=False)
 
 def login(request):
     username=request.POST.get("username")
@@ -95,22 +90,14 @@ def login(request):
         'msg':'用户不存在',
         })
 
-def logout(request):
-    token=request.POST.get("token")
-    Token.objects.filter(value=token).delete()
-    return JsonResponse({
-    'code':200,
-    'msg':'登出成功',
-    })
-
 def getuser(request):
     token=request.POST.get("token")
-    if getauth(token,"1"):
+    if getauth(token,1):
         res=list(User.objects.all().values())
         return JsonResponse({
             'data':res,
             'code':200,
-            'msg':'查看用户成功',
+            'msg':'查询用户成功',
         })
     else:
         return JsonResponse({
@@ -121,14 +108,15 @@ def getuser(request):
 def edituser(request):
     userid=request.POST.get("userid")
     username=request.POST.get("username")
-    groupid=request.POST.get("groupid")
+    age=request.POST.get("age")
+    address=request.POST.get("address")
     token=request.POST.get("token")
-    if getauth(token,"2"):
-        User.objects.filter(userid=userid).update(username=username,groupid=groupid,groupname=Group.objects.get(groupid=groupid).groupname)
+    if getauth(token,3):
+        User.objects.filter(userid=userid).update(username=username,age=age,address=address)
         Token.objects.filter(userid=userid).delete()
         return JsonResponse({
             'code':200,
-            'msg':'修改用户成功',
+            'msg':'修改用户成功,请重新登录',
         })
     else:
         return JsonResponse({
@@ -141,7 +129,7 @@ def changepwd(request):
     oldpwd=request.POST.get("oldpwd")
     newpwd=request.POST.get("newpwd")
     token=request.POST.get("token")
-    if getauth(token,"3"):
+    if getauth(token,3):
         try:
             user=User.objects.get(userid=userid,password=add_salt(oldpwd))
             user.password=add_salt(newpwd)
@@ -149,7 +137,7 @@ def changepwd(request):
             Token.objects.filter(userid=user.userid).delete()
             return JsonResponse({
             'code':200,
-            'msg':'更改成功',
+            'msg':'修改密码成功，请重新登录',
             })
         except User.DoesNotExist:
             return JsonResponse({
@@ -166,12 +154,43 @@ def changepwd(request):
 def deleteuser(request):
     userid=request.POST.get("userid")
     token=request.POST.get("token")
-    if getauth(token,"4"):
+    if getauth(token,5):
         User.objects.get(userid=userid).delete()
         Token.objects.filter(userid=userid).delete()
         return JsonResponse({
         'code':200,
-        'msg':'更改成功',
+        'msg':'删除用户成功',
+        })
+    else:
+        return JsonResponse({
+            'code':403,
+            'msg':'未授权',
+        })
+
+def getgroup(request):
+    token=request.POST.get("token")
+    if getauth(token,6):
+        res=list(Group.objects.all().values())
+        return JsonResponse({
+            'data':res,
+            'code':200,
+            'msg':'查询角色成功',
+        })
+    else:
+        return JsonResponse({
+            'code':403,
+            'msg':'未授权',
+        })
+
+def editgroup(request):
+    groupid=request.POST.get("groupid")
+    groupname=request.POST.get("groupname")
+    token=request.POST.get("token")
+    if getauth(token,8):
+        Group.objects.filter(groupid=groupid).update(groupname=groupname)
+        return JsonResponse({
+            'code':200,
+            'msg':'修改用户成功',
         })
     else:
         return JsonResponse({
@@ -182,7 +201,7 @@ def deleteuser(request):
 def getrights(request):
     groupid=request.POST.get("groupid")
     token=request.POST.get("token")
-    if getauth(token,"5"):
+    if getauth(token,9):
         group=GroupRights.objects.filter(groupid=groupid).values()
         rights=[]
         for i in group:
@@ -192,7 +211,7 @@ def getrights(request):
             'data':res,
             'rights':rights,
             'code':200,
-            'msg':'查看角色成功',
+            'msg':'查看角色权限成功',
         })
     else:
         return JsonResponse({
@@ -205,13 +224,13 @@ def editrights(request):
     rights=request.POST.get("rights")
     rights=json.loads(rights)
     token=request.POST.get("token")
-    if getauth(token,"6"):
+    if getauth(token,9):
         GroupRights.objects.filter(groupid=groupid).delete()
         for i in rights:
             GroupRights.objects.create(groupid=groupid,rightsid=i)
         return JsonResponse({
             'code':200,
-            'msg':'修改角色成功',
+            'msg':'修改角色权限成功',
         })
     else:
         return JsonResponse({

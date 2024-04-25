@@ -2,7 +2,7 @@
     <div class="main">
         <el-dialog
           v-model="editVisible"
-          title="编辑信息"
+          title="修改用户"
           width="500"
           :before-close="handleClose"
         >
@@ -17,19 +17,17 @@
             style="padding: 5px 0;"
             v-model="edited.username"
           />
-          <span>角色:</span>
-          <el-select
+          <span>年龄:</span>
+          <el-input 
             style="padding: 5px 0;"
-            v-model="edited.groupid"
-            placeholder=""
-          >
-            <el-option
-              v-for="item in options"
-              :key="item.groupid"
-              :label="item.groupname"
-              :value="item.groupid"
-            />
-          </el-select>
+            v-model="edited.age"
+          />
+          <span>地址:</span>
+          <el-input 
+            style="padding: 5px 0;"
+            v-model="edited.address"
+          />
+          <br><br><el-button type="primary" @click="pwdclear();">更改密码</el-button>
           <template #footer>
             <div class="dialog-footer">
               <el-button @click="editVisible = false">取消</el-button>
@@ -38,9 +36,9 @@
           </template>
         </el-dialog>
         <el-dialog
-          v-model="changeVisible"
-          title="更改密码"
-          width="500"
+          v-model="pwdVisible"
+          title="修改密码"
+          width="600"
           :before-close="handleClose"
         >
           <span>请输入旧密码:</span>
@@ -59,8 +57,8 @@
           />
           <template #footer>
             <div class="dialog-footer">
-              <el-button @click="changeVisible = false">取消</el-button>
-              <el-button type="success" @click="changeVisible = false;changesubmit();">确认</el-button>
+              <el-button @click="pwdVisible = false">取消</el-button>
+              <el-button type="success" @click="pwdVisible = false;pwdsubmit();">确认</el-button>
             </div>
           </template>
         </el-dialog>
@@ -93,13 +91,16 @@
             <el-table-column label="用户名">
               <template #default="scope">{{ scope.row.username }}</template>
             </el-table-column>
-            <el-table-column label="角色">
-              <template #default="scope">{{ scope.row.groupname }}</template>
+            <el-table-column label="年龄">
+              <template #default="scope">{{ scope.row.age }}</template>
+            </el-table-column>
+            <el-table-column label="地址">
+              <template #default="scope">{{ scope.row.address }}</template>
             </el-table-column>
             <el-table-column label="操作">
               <template #default="scope">
-                <el-button type="warning" @click="editVisible=true;selected=scope.row;editclear();">编辑信息</el-button>
-                <el-button type="primary" @click="changeVisible=true;selected=scope.row;changeclear();">更改密码</el-button>
+                <el-button type="warning" @click="editclear(scope.row);">修改用户</el-button>
+                <el-button type="primary" @click="changeclear(scope.row);">修改角色</el-button>
                 <el-button type="danger" @click="deleteVisible=true;selected=scope.row;">删除</el-button>
               </template>
             </el-table-column>
@@ -114,9 +115,9 @@ import { getCurrentInstance,onMounted, ref } from 'vue';
 import Header from '../components/Header.vue'
 const {proxy} = getCurrentInstance()
 
-var options=ref();
-var tableData=ref()
-var auth=ref(false)
+var tableData=ref();
+var auth=ref(false);
+var selected=ref();
 
 function getuser(){
   proxy.$http.post("http://localhost:8000/api/getuser/",{
@@ -128,31 +129,33 @@ function getuser(){
       tableData.value=res.data.data;
       auth.value=true;
     }
+    if(res.data.code==403) window.alert(res.data.msg)
   });
 }
 
-function getgroup(){
-  proxy.$http.get("http://localhost:8000/api/getgroup/").then((res)=>{
-    options.value=res.data;
-  })
-}
-
-var selected=ref();
-
 var edited=ref({});
 var editVisible=ref(false);
-function editclear(){
+
+function editclear(row){
+  editVisible.value=true;
+  selected.value=row;
   edited.value=JSON.parse(JSON.stringify(selected.value))
 }
+
 function editsubmit(){
   proxy.$http.post("http://localhost:8000/api/edituser/",{
     'userid':edited.value.userid,
     'username':edited.value.username,
-    'groupid':edited.value.groupid,
+    'age':edited.value.age,
+    'address':edited.value.address,
     'token':localStorage.getItem("token"),
   },{
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
+    if(res.data.code==200){
+      window.alert(res.data.msg);
+      localStorage.removeItem("token");
+    }
     if(res.data.code==403) window.alert(res.data.msg);
   });
   setTimeout(() => {
@@ -160,14 +163,17 @@ function editsubmit(){
   }, 200);
 }
 
-var changeVisible=ref(false);
+var pwdVisible=ref(false);
 var oldpwd=ref();
 var newpwd=ref();
-function changeclear(){
+
+function pwdclear(){
   oldpwd.value=null;
   newpwd.value=null;
+  pwdVisible.value=true;
 }
-function changesubmit(){
+
+function pwdsubmit(){
   proxy.$http.post("http://localhost:8000/api/changepwd/",{
     'userid':selected.value.userid,
     'oldpwd':oldpwd.value,
@@ -176,11 +182,16 @@ function changesubmit(){
   },{
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
+    if(res.data.code==200){
+      window.alert(res.data.msg);
+      localStorage.removeItem("token");
+    }
     if(res.data.code==403) window.alert(res.data.msg);
   })
 }
 
 var deleteVisible=ref(false);
+
 function deletesubmit(){
   proxy.$http.post("http://localhost:8000/api/deleteuser/",{
     'userid':selected.value.userid,
@@ -195,7 +206,6 @@ function deletesubmit(){
 
 onMounted(()=>{
   getuser();
-  getgroup();
 })
 </script>
 

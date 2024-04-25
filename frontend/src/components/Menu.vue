@@ -22,7 +22,7 @@ var index=ref()
 
 function getmenu(){
   proxy.$http.get("http://localhost:8000/api/getmenu/").then((res)=>{
-  index.value=res.data;
+    index.value=res.data;
   });
 }
 

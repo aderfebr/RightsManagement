@@ -23,8 +23,8 @@ import { getCurrentInstance,onMounted,ref } from 'vue';
 import router from '..';
 const {proxy} = getCurrentInstance()
 
-var username=ref()
-var token=ref()
+var username=ref(localStorage.getItem('username'))
+var token=ref(localStorage.getItem('token'))
 
 function login(){
   router.push('/login');
@@ -35,19 +35,14 @@ function register(){
 }
 
 function logout(){
-  proxy.$http.post("http://localhost:8000/api/logout/",{
-    'token':token.value,
-  },{
-    headers: {'Content-Type': 'multipart/form-data'}
-  })
   localStorage.removeItem('username');
   localStorage.removeItem('token');
   location.reload();
 }
 
 onMounted(()=>{
-  username.value=localStorage.getItem('username')
-  token.value=localStorage.getItem('token')
+  // username.value=localStorage.getItem('username')
+  // token.value=localStorage.getItem('token')
 })
 </script>
 
