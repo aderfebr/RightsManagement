@@ -27,7 +27,7 @@
             style="padding: 5px 0;"
             v-model="edited.address"
           />
-          <br><br><el-button type="primary" @click="pwdclear();">更改密码</el-button>
+          <br><br><el-button type="primary" @click="pwdclear();">修改密码</el-button>
           <template #footer>
             <div class="dialog-footer">
               <el-button @click="editVisible = false">取消</el-button>
@@ -81,7 +81,8 @@
         <el-divider></el-divider>
         <div v-if="auth">
           <el-row style="font-size: 25px;">
-              <el-input size="large" v-model="input" style="width: 300px"/>&ensp;<el-button type="primary">搜索&ensp;<el-icon><Search /></el-icon></el-button>
+              <el-col :span="20"><el-input size="large" v-model="filter" style="width: 300px"/>&ensp;<el-button type="primary" @click="getuser">搜索&ensp;<el-icon><Search /></el-icon></el-button></el-col>
+              <el-col :span="4" style="text-align: right;"><el-button type="success" @click="adduser">增加用户&ensp;+</el-button></el-col>
           </el-row>
           <br>
           <el-table :data="tableData" style="width: 100%">
@@ -97,7 +98,7 @@
             <el-table-column label="地址">
               <template #default="scope">{{ scope.row.address }}</template>
             </el-table-column>
-            <el-table-column label="操作">
+            <el-table-column label="操作" width="300px">
               <template #default="scope">
                 <el-button type="warning" @click="editclear(scope.row);">修改用户</el-button>
                 <el-button type="primary" @click="changeclear(scope.row);">修改角色</el-button>
@@ -111,6 +112,7 @@
 </template>
 
 <script setup>
+import router from '..';
 import { getCurrentInstance,onMounted, ref } from 'vue';
 import Header from '../components/Header.vue'
 const {proxy} = getCurrentInstance()
@@ -129,12 +131,16 @@ function getuser(){
       tableData.value=res.data.data;
       auth.value=true;
     }
-    if(res.data.code==403) window.alert(res.data.msg)
   });
 }
 
 var edited=ref({});
 var editVisible=ref(false);
+
+function adduser(){
+  router.push('/register');
+}
+
 
 function editclear(row){
   editVisible.value=true;
@@ -152,9 +158,9 @@ function editsubmit(){
   },{
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
-    if(res.data.code==200){
+    if(res.data.code==200&&edited.value.username==localStorage.getItem("username")){
       window.alert(res.data.msg);
-      localStorage.removeItem("token");
+      logout();
     }
     if(res.data.code==403) window.alert(res.data.msg);
   });
@@ -182,9 +188,9 @@ function pwdsubmit(){
   },{
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
-    if(res.data.code==200){
+    if(res.data.code==200&&edited.value.username==localStorage.getItem("username")){
       window.alert(res.data.msg);
-      localStorage.removeItem("token");
+      logout();
     }
     if(res.data.code==403) window.alert(res.data.msg);
   })
@@ -200,8 +206,14 @@ function deletesubmit(){
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
     if(res.data.code==403) window.alert(res.data.msg);
-    location.reload();
+    getuser();
   });
+}
+
+function logout(){
+  localStorage.removeItem('username');
+  localStorage.removeItem('token');
+  location.reload();
 }
 
 onMounted(()=>{

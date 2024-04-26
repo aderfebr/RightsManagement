@@ -29,15 +29,11 @@ import {useRouter} from 'vue-router'
 const {proxy} = getCurrentInstance()
 
 var activeIndex=useRouter().currentRoute.value.path;
-var tmp=ref();
 var index=ref();
 
 function getmenu(){
   proxy.$http.get("http://localhost:8000/api/getmenu/").then((res)=>{
-    tmp.value=res.data;
-    index.value=tmp.value.filter((item)=>{
-      return item.vis;
-    })
+    index.value=res.data;
   });
 }
 

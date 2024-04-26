@@ -1,6 +1,29 @@
 <template>
     <div class="main">
         <el-dialog
+          v-model="addVisible"
+          title="编辑信息"
+          width="500"
+          :before-close="handleClose"
+        >
+          <span>ID:</span>
+          <el-input 
+            style="padding: 5px 0;"
+            v-model="edited.groupid"
+          />
+          <span>角色名:</span>
+          <el-input 
+            style="padding: 5px 0;"
+            v-model="edited.groupname"
+          />
+          <template #footer>
+            <div class="dialog-footer">
+              <el-button @click="addVisible = false">取消</el-button>
+              <el-button type="success" @click="addVisible = false;addsubmit();">确认</el-button>
+            </div>
+          </template>
+        </el-dialog>
+        <el-dialog
           v-model="editVisible"
           title="编辑信息"
           width="500"
@@ -60,7 +83,8 @@
         <el-divider></el-divider>
         <div v-if="auth">
           <el-row style="font-size: 25px;">
-              <el-input size="large" v-model="input" style="width: 300px"/>&ensp;<el-button type="primary">搜索&ensp;<el-icon><Search /></el-icon></el-button>
+            <el-col :span="20"><el-input size="large" v-model="filter" style="width: 300px"/>&ensp;<el-button type="primary" @click="getgroup">搜索&ensp;<el-icon><Search /></el-icon></el-button></el-col>
+              <el-col :span="4" style="text-align: right;"><el-button type="success" @click="addclear">增加角色&ensp;+</el-button></el-col>
           </el-row>
           <br>
           <el-table :data="tableData" style="width: 100%">
@@ -70,7 +94,7 @@
             <el-table-column label="角色名">
               <template #default="scope">{{ scope.row.groupname }}</template>
             </el-table-column>
-            <el-table-column label="操作">
+            <el-table-column label="操作" width="300px">
               <template #default="scope">
                 <el-button type="warning" @click="editclear(scope.row);">修改角色</el-button>
                 <el-button type="primary" @click="changeclear(scope.row);">修改权限</el-button>
@@ -108,7 +132,28 @@ function getgroup(){
 }
 
 var edited=ref({});
+var addVisible=ref(false);
 var editVisible=ref(false);
+
+function addclear(){
+  addVisible.value=true;
+  edited.value={};
+}
+
+function addsubmit(){
+  proxy.$http.post("http://localhost:8000/api/addgroup/",{
+    'groupid':edited.value.groupid,
+    'groupname':edited.value.groupname,
+    'token':localStorage.getItem("token"),
+  },{
+    headers: {'Content-Type': 'multipart/form-data'}
+  }).then((res)=>{
+    if(res.data.code==403) window.alert(res.data.msg);
+  });
+  setTimeout(() => {
+    getgroup();
+  }, 200);
+}
 
 function editclear(row){
   editVisible.value=true;
@@ -167,6 +212,18 @@ function editrights(){
 }
 
 var deleteVisible=ref(false);
+
+function deletesubmit(){
+  proxy.$http.post("http://localhost:8000/api/deletegroup/",{
+    'groupid':selected.value.groupid,
+    'token':localStorage.getItem("token"),
+  },{
+    headers: {'Content-Type': 'multipart/form-data'}
+  }).then((res)=>{
+    if(res.data.code==403) window.alert(res.data.msg);
+    getgroup();
+  });
+}
 
 onMounted(()=>{
   getgroup();

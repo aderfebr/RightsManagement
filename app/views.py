@@ -2,38 +2,17 @@ from django.http import JsonResponse
 from app.models import Group,GroupRights,Menu,Rights,Token,User,UserGroup
 import hashlib,datetime,json
 
-def getmenu(request):
-    res=list(Menu.objects.all().values())
-    return JsonResponse(res,safe=False)
-
-def editmenu(request):
-    index=request.POST.get("index")
-    token=request.POST.get("token")
-    if getauth(token,7):
-        index=json.loads(index)
-        for i in index:
-            Menu.objects.filter(id=i["id"]).update(vis=i["vis"])
-        return JsonResponse({
-            'code':200,
-            'msg':'修改菜单成功',
-        })
-    else:
-        return JsonResponse({
-            'code':403,
-            'msg':'未授权',
-        })
-
 def getauth(token,auth):
     try:
         data=Token.objects.get(value=token)
         userid=data.userid
         if datetime.datetime.now()>data.expire_date.replace(tzinfo=None):
             return False
-    except Token.DoesNotExist:
+    except:
         return False
     try:
         groupid=UserGroup.objects.get(userid=userid).groupid
-    except UserGroup.DoesNotExist:
+    except:
         return False
     rights=list(GroupRights.objects.filter(groupid=groupid).values())
     for i in rights:
@@ -79,7 +58,7 @@ def login(request):
             'username':user.username,
             'token':token,
             })
-        except User.DoesNotExist:
+        except:
             return JsonResponse({
             'code':403,
             'msg':'密码错误',
@@ -139,7 +118,7 @@ def changepwd(request):
             'code':200,
             'msg':'修改密码成功，请重新登录',
             })
-        except User.DoesNotExist:
+        except:
             return JsonResponse({
             'code':403,
             'msg':'密码错误',
@@ -176,6 +155,28 @@ def getgroup(request):
             'code':200,
             'msg':'查询角色成功',
         })
+    else:
+        return JsonResponse({
+            'code':403,
+            'msg':'未授权',
+        })
+
+def addgroup(request):
+    groupid=request.POST.get("groupid")
+    groupname=request.POST.get("groupname")
+    token=request.POST.get("token")
+    if getauth(token,7):
+        try:
+            Group.objects.create(groupid=groupid,groupname=groupname)
+            return JsonResponse({
+                'code':200,
+                'msg':'增加用户成功',
+            })
+        except:
+            return JsonResponse({
+                'code':403,
+                'msg':'主键重复',
+            })
     else:
         return JsonResponse({
             'code':403,
@@ -231,6 +232,42 @@ def editrights(request):
         return JsonResponse({
             'code':200,
             'msg':'修改角色权限成功',
+        })
+    else:
+        return JsonResponse({
+            'code':403,
+            'msg':'未授权',
+        })
+
+def deletegroup(request):
+    groupid=request.POST.get("groupid")
+    token=request.POST.get("token")
+    if getauth(token,10):
+        Group.objects.get(groupid=groupid).delete()
+        return JsonResponse({
+        'code':200,
+        'msg':'删除角色成功',
+        })
+    else:
+        return JsonResponse({
+            'code':403,
+            'msg':'未授权',
+        })
+
+def getmenu(request):
+    res=list(Menu.objects.all().values())
+    return JsonResponse(res,safe=False)
+
+def editmenu(request):
+    index=request.POST.get("index")
+    token=request.POST.get("token")
+    if getauth(token,7):
+        index=json.loads(index)
+        for i in index:
+            Menu.objects.filter(id=i["id"]).update(vis=i["vis"])
+        return JsonResponse({
+            'code':200,
+            'msg':'修改菜单成功',
         })
     else:
         return JsonResponse({

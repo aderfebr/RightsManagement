@@ -3,13 +3,7 @@
       <Header></Header>
       <div class="title">菜单管理</div>
       <el-divider></el-divider>
-        <!-- <el-tree class="tree" :data="index" font-size="20px">
-          <template #default="{node,data}">
-            <span><el-icon><component :is="data.icon" /></el-icon>&ensp;{{ data.label }}&ensp;<el-switch v-model="data.vis"/></span>
-          </template>
-        </el-tree> -->
-        <div v-for="item in index"><el-icon><component :is="item.icon" /></el-icon>&ensp;{{ item.label }}&ensp;<el-switch v-model="item.vis"/></div>
-      <br><el-button type="success" @click="editmenu">确认&ensp;<el-icon><Check /></el-icon></el-button>
+      <div v-for="item in index"><el-icon><component :is="item.icon" /></el-icon>&ensp;{{ item.label }}&ensp;</div>
     </div>
 </template>
 

@@ -18,8 +18,6 @@ from django.urls import path
 from app import views
 
 urlpatterns = [
-    path("api/getmenu/",views.getmenu),
-    path("api/editmenu/",views.editmenu),
     path("api/register/",views.register),
     path("api/login/",views.login),
     path("api/getuser/",views.getuser),
@@ -27,7 +25,11 @@ urlpatterns = [
     path("api/changepwd/",views.changepwd),
     path("api/deleteuser/",views.deleteuser),
     path("api/getgroup/",views.getgroup),
+    path("api/addgroup/",views.addgroup),
     path("api/editgroup/",views.editgroup),
     path("api/getrights/",views.getrights),
     path("api/editrights/",views.editrights),
+    path("api/deletegroup/",views.deletegroup),
+    path("api/getmenu/",views.getmenu),
+    path("api/editmenu/",views.editmenu),
 ]

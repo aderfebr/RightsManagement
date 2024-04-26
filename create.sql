@@ -14,7 +14,6 @@ CREATE TABLE `menu` (
   `label` varchar(45) DEFAULT NULL,
   `icon` varchar(45) DEFAULT NULL,
   `index` varchar(45) DEFAULT NULL,
-  `vis` tinyint DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 CREATE TABLE `rights` (
@@ -60,8 +59,7 @@ INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('7', 
 INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('8', '修改角色');
 INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('9', '修改角色权限');
 INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('10', '删除角色');
-INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('11', '查询菜单');
-INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('12', '修改菜单');
+INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('11', '修改菜单');
 INSERT INTO `rightsmanagement`.`group_rights` (`groupid`, `rightsid`) VALUES ('1', '1');
 INSERT INTO `rightsmanagement`.`group_rights` (`groupid`, `rightsid`) VALUES ('1', '2');
 INSERT INTO `rightsmanagement`.`group_rights` (`groupid`, `rightsid`) VALUES ('1', '3');
@@ -73,4 +71,3 @@ INSERT INTO `rightsmanagement`.`group_rights` (`groupid`, `rightsid`) VALUES ('1
 INSERT INTO `rightsmanagement`.`group_rights` (`groupid`, `rightsid`) VALUES ('1', '9');
 INSERT INTO `rightsmanagement`.`group_rights` (`groupid`, `rightsid`) VALUES ('1', '10');
 INSERT INTO `rightsmanagement`.`group_rights` (`groupid`, `rightsid`) VALUES ('1', '11');
-INSERT INTO `rightsmanagement`.`group_rights` (`groupid`, `rightsid`) VALUES ('1', '12');
