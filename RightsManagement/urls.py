@@ -23,6 +23,8 @@ urlpatterns = [
     path("api/getuser/",views.getuser),
     path("api/edituser/",views.edituser),
     path("api/changepwd/",views.changepwd),
+    path("api/getgroupbyuser/",views.getgroupbyuser),
+    path("api/editgroupbyuser/",views.editgroupbyuser),
     path("api/deleteuser/",views.deleteuser),
     path("api/getgroup/",views.getgroup),
     path("api/addgroup/",views.addgroup),

@@ -11,13 +11,14 @@ def getauth(token,auth):
     except:
         return False
     try:
-        groupid=UserGroup.objects.get(userid=userid).groupid
+        group=list(UserGroup.objects.filter(userid=userid).values())
     except:
         return False
-    rights=list(GroupRights.objects.filter(groupid=groupid).values())
-    for i in rights:
-        if i["rightsid"]==auth:
-            return True
+    for groupid in group:
+        rights=list(GroupRights.objects.filter(groupid=groupid['groupid']).values())
+        for i in rights:
+            if i["rightsid"]==auth:
+                return True
     return False
 
 def add_salt(text):
@@ -129,7 +130,46 @@ def changepwd(request):
             'msg':'未授权',
         })
 
+def getgroupbyuser(request):
+    userid=request.POST.get("userid")
+    token=request.POST.get("token")
+    if getauth(token,4):
+        user=UserGroup.objects.filter(userid=userid).values()
+        group=[]
+        for i in user:
+            group.append(int(i["groupid"]))
+        res=list(Group.objects.all().values())
+        return JsonResponse({
+            'data':res,
+            'group':group,
+            'code':200,
+            'msg':'查询角色权限成功',
+        })
+    else:
+        return JsonResponse({
+            'code':403,
+            'msg':'未授权',
+        })
     
+def editgroupbyuser(request):
+    userid=request.POST.get("userid")
+    group=request.POST.get("group")
+    group=json.loads(group)
+    token=request.POST.get("token")
+    if getauth(token,4):
+        UserGroup.objects.filter(userid=userid).delete()
+        for i in group:
+            UserGroup.objects.create(userid=userid,groupid=i)
+        return JsonResponse({
+            'code':200,
+            'msg':'修改用户角色成功',
+        })
+    else:
+        return JsonResponse({
+            'code':403,
+            'msg':'未授权',
+        })    
+
 def deleteuser(request):
     userid=request.POST.get("userid")
     token=request.POST.get("token")
@@ -212,7 +252,7 @@ def getrights(request):
             'data':res,
             'rights':rights,
             'code':200,
-            'msg':'查看角色权限成功',
+            'msg':'查询角色权限成功',
         })
     else:
         return JsonResponse({

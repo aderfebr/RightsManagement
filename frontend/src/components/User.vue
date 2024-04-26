@@ -63,6 +63,23 @@
           </template>
         </el-dialog>
         <el-dialog
+          v-model="changeVisible"
+          title="修改角色"
+          width="600"
+          :before-close="handleClose"
+        >
+          <el-transfer
+            v-model="groupcheck"
+            :props="{
+              key: 'groupid',
+              label: 'groupname',
+            }"
+            :data="group"
+            :titles="['未分配角色', '已分配角色']"
+          />
+          <br><el-button type="success" @click="changeVisible = false;editgroup()">确认&ensp;<el-icon><Check /></el-icon></el-button>
+        </el-dialog>
+        <el-dialog
           v-model="deleteVisible"
           title="删除"
           width="500"
@@ -141,7 +158,6 @@ function adduser(){
   router.push('/register');
 }
 
-
 function editclear(row){
   editVisible.value=true;
   selected.value=row;
@@ -194,6 +210,44 @@ function pwdsubmit(){
     }
     if(res.data.code==403) window.alert(res.data.msg);
   })
+}
+
+var changeVisible=ref(false);
+var group=ref();
+var groupcheck=ref();
+
+function changeclear(row){
+  changeVisible.value=true;
+  selected.value=row;
+  edited.value=JSON.parse(JSON.stringify(selected.value));
+  getgroup();
+}
+
+function getgroup(){
+  proxy.$http.post("http://localhost:8000/api/getgroupbyuser/",{
+    'userid':edited.value.userid,
+    'token':localStorage.getItem("token"),
+  },{
+    headers: {'Content-Type': 'multipart/form-data'}
+  }).then((res)=>{
+    if(res.data.code==403) window.alert(res.data.msg);
+    else{
+      group.value=res.data.data;
+      groupcheck.value=res.data.group;
+    }
+  });
+}
+
+function editgroup(){
+  proxy.$http.post("http://localhost:8000/api/editgroupbyuser/",{
+    'userid':edited.value.userid,
+    'group':JSON.stringify(groupcheck.value),
+    'token':localStorage.getItem("token"),
+  },{
+    headers: {'Content-Type': 'multipart/form-data'}
+  }).then((res)=>{
+    if(res.data.code==403) window.alert(res.data.msg);
+  });
 }
 
 var deleteVisible=ref(false);

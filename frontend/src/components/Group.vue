@@ -113,9 +113,6 @@ const {proxy} = getCurrentInstance()
 
 var tableData=ref();
 var selected=ref();
-var groupid=ref();
-var rights=ref();
-var rightscheck=ref();
 var auth=ref(false);
 
 function getgroup(){
@@ -177,16 +174,19 @@ function editsubmit(){
 }
 
 var changeVisible=ref(false);
+var rights=ref();
+var rightscheck=ref();
 
 function changeclear(row){
   changeVisible.value=true;
-  groupid.value=row.groupid
+  selected.value=row;
+  edited.value=JSON.parse(JSON.stringify(selected.value))
   getrights();
 }
 
 function getrights(){
   proxy.$http.post("http://localhost:8000/api/getrights/",{
-    'groupid':groupid.value,
+    'groupid':edited.value.groupid,
     'token':localStorage.getItem("token"),
   },{
     headers: {'Content-Type': 'multipart/form-data'}
@@ -201,7 +201,7 @@ function getrights(){
 
 function editrights(){
   proxy.$http.post("http://localhost:8000/api/editrights/",{
-    'groupid':groupid.value,
+    'groupid':edited.value.groupid,
     'rights':JSON.stringify(rightscheck.value),
     'token':localStorage.getItem("token"),
   },{
