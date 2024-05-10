@@ -1,5 +1,6 @@
+DROP TABLE IF EXISTS `group`,`group_rights`,`menu`,`rights`,`token`,`user`,`user_group`;
 CREATE TABLE `group` (
-  `groupid` int NOT NULL,
+  `groupid` int NOT NULL AUTO_INCREMENT,
   `groupname` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`groupid`)
 );
@@ -42,13 +43,13 @@ CREATE TABLE `user_group` (
   `groupid` int DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
-INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `index`, `vis`) VALUES ('1', '主页', 'HomeFilled', '/home', '0');
-INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `index`, `vis`) VALUES ('2', '用户管理', 'UserFilled', '/user', '1');
-INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `index`, `vis`) VALUES ('3', '角色管理', 'MoreFilled', '/group', '1');
-INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `index`, `vis`) VALUES ('4', '菜单管理', 'Operation', '/menu', '1');
-INSERT INTO `rightsmanagement`.`group` (`groupid`, `groupname`) VALUES ('1', 'admin');
-INSERT INTO `rightsmanagement`.`group` (`groupid`, `groupname`) VALUES ('2', 'teacher');
-INSERT INTO `rightsmanagement`.`group` (`groupid`, `groupname`) VALUES ('3', 'student');
+INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `index`) VALUES ('1', '主页', 'HomeFilled', '/home');
+INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `index`) VALUES ('2', '用户管理', 'UserFilled', '/user');
+INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `index`) VALUES ('3', '角色管理', 'MoreFilled', '/group');
+INSERT INTO `rightsmanagement`.`menu` (`id`, `label`, `icon`, `index`) VALUES ('4', '菜单管理', 'Operation', '/menu');
+INSERT INTO `rightsmanagement`.`group` (`groupname`) VALUES ('admin');
+INSERT INTO `rightsmanagement`.`group` (`groupname`) VALUES ('teacher');
+INSERT INTO `rightsmanagement`.`group` (`groupname`) VALUES ('student');
 INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('1', '查询用户');
 INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('2', '增加用户');
 INSERT INTO `rightsmanagement`.`rights` (`rightsid`, `rightsname`) VALUES ('3', '修改用户');

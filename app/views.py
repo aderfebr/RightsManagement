@@ -72,8 +72,12 @@ def login(request):
 
 def getuser(request):
     token=request.POST.get("token")
+    filter=request.POST.get("filter")
     if getauth(token,1):
-        res=list(User.objects.all().values())
+        if filter is None:
+            res=list(User.objects.all().values())
+        else:
+            res=list(User.objects.filter(username__contains=filter).values())
         return JsonResponse({
             'data':res,
             'code':200,
@@ -85,18 +89,33 @@ def getuser(request):
             'msg':'未授权',
         })
 
-def edituser(request):
-    userid=request.POST.get("userid")
+def adduser(request):
     username=request.POST.get("username")
     age=request.POST.get("age")
     address=request.POST.get("address")
     token=request.POST.get("token")
-    if getauth(token,3):
-        User.objects.filter(userid=userid).update(username=username,age=age,address=address)
-        Token.objects.filter(userid=userid).delete()
+    if getauth(token,2):
+        User.objects.create(username=username,age=age,address=address)
         return JsonResponse({
             'code':200,
-            'msg':'修改用户成功,请重新登录',
+            'msg':'修改用户成功',
+        })
+    else:
+        return JsonResponse({
+            'code':403,
+            'msg':'未授权',
+        })
+
+def edituser(request):
+    userid=request.POST.get("userid")
+    age=request.POST.get("age")
+    address=request.POST.get("address")
+    token=request.POST.get("token")
+    if getauth(token,3):
+        User.objects.filter(userid=userid).update(age=age,address=address)
+        return JsonResponse({
+            'code':200,
+            'msg':'修改用户成功',
         })
     else:
         return JsonResponse({
@@ -188,8 +207,12 @@ def deleteuser(request):
 
 def getgroup(request):
     token=request.POST.get("token")
+    filter=request.POST.get("filter")
     if getauth(token,6):
-        res=list(Group.objects.all().values())
+        if filter is None:
+            res=list(Group.objects.all().values())
+        else:
+            res=list(Group.objects.filter(groupname__contains=filter).values())
         return JsonResponse({
             'data':res,
             'code':200,
@@ -202,12 +225,11 @@ def getgroup(request):
         })
 
 def addgroup(request):
-    groupid=request.POST.get("groupid")
     groupname=request.POST.get("groupname")
     token=request.POST.get("token")
     if getauth(token,7):
         try:
-            Group.objects.create(groupid=groupid,groupname=groupname)
+            Group.objects.create(groupname=groupname)
             return JsonResponse({
                 'code':200,
                 'msg':'增加用户成功',

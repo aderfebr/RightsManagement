@@ -2,19 +2,14 @@
     <div class="main">
         <el-dialog
           v-model="addVisible"
-          title="编辑信息"
+          title="添加角色"
           width="500"
           :before-close="handleClose"
         >
-          <span>ID:</span>
-          <el-input 
-            style="padding: 5px 0;"
-            v-model="edited.groupid"
-          />
           <span>角色名:</span>
           <el-input 
             style="padding: 5px 0;"
-            v-model="edited.groupname"
+            v-model="selected.groupname"
           />
           <template #footer>
             <div class="dialog-footer">
@@ -32,13 +27,13 @@
           <span>ID:</span>
           <el-input 
             style="padding: 5px 0;"
-            v-model="edited.groupid"
+            v-model="selected.groupid"
             disabled
           />
           <span>角色名:</span>
           <el-input 
             style="padding: 5px 0;"
-            v-model="edited.groupname"
+            v-model="selected.groupname"
           />
           <template #footer>
             <div class="dialog-footer">
@@ -83,8 +78,8 @@
         <el-divider></el-divider>
         <div v-if="auth">
           <el-row style="font-size: 25px;">
-            <el-col :span="20"><el-input size="large" v-model="filter" style="width: 300px"/>&ensp;<el-button type="primary" @click="getgroup">搜索&ensp;<el-icon><Search /></el-icon></el-button></el-col>
-              <el-col :span="4" style="text-align: right;"><el-button type="success" @click="addclear">增加角色&ensp;+</el-button></el-col>
+            <el-col :span="20"><el-input size="large" v-model="filter" placeholder="按角色名搜索" style="width: 300px"/>&ensp;<el-button type="primary" @click="getgroup">搜索&ensp;<el-icon><Search /></el-icon></el-button><el-button type="danger" @click="filter='';getgroup();">清空过滤&ensp;<el-icon><Close /></el-icon></el-button></el-col>
+              <el-col :span="4" style="text-align: right;"><el-button type="success" @click="addclear">添加角色&ensp;+</el-button></el-col>
           </el-row>
           <br>
           <el-table :data="tableData" style="width: 100%">
@@ -98,11 +93,12 @@
               <template #default="scope">
                 <el-button type="warning" @click="editclear(scope.row);">修改角色</el-button>
                 <el-button type="primary" @click="changeclear(scope.row);">修改权限</el-button>
-                <el-button type="danger" @click="deleteVisible=true;selected=scope.row;">删除</el-button>
+                <el-button type="danger" @click="selected=scope.row;deleteVisible=true;">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
         </div>
+        <div v-if="!auth" style="width: 100%;text-align: center;font-size: 25px;color: red;">未授权!</div>
     </div>
 </template>
 
@@ -112,12 +108,14 @@ import { getCurrentInstance,onMounted,ref } from 'vue';
 const {proxy} = getCurrentInstance()
 
 var tableData=ref();
-var selected=ref();
 var auth=ref(false);
+var filter=ref();
+var selected=ref();
 
 function getgroup(){
   proxy.$http.post("http://localhost:8000/api/getgroup/",{
     'token':localStorage.getItem("token"),
+    'filter':filter.value,
   },{
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
@@ -128,19 +126,16 @@ function getgroup(){
   });
 }
 
-var edited=ref({});
 var addVisible=ref(false);
-var editVisible=ref(false);
 
 function addclear(){
   addVisible.value=true;
-  edited.value={};
+  selected.value={};
 }
 
 function addsubmit(){
   proxy.$http.post("http://localhost:8000/api/addgroup/",{
-    'groupid':edited.value.groupid,
-    'groupname':edited.value.groupname,
+    'groupname':selected.value.groupname,
     'token':localStorage.getItem("token"),
   },{
     headers: {'Content-Type': 'multipart/form-data'}
@@ -152,16 +147,17 @@ function addsubmit(){
   }, 200);
 }
 
+var editVisible=ref(false);
+
 function editclear(row){
   editVisible.value=true;
-  selected.value=row;
-  edited.value=JSON.parse(JSON.stringify(selected.value))
+  selected.value=JSON.parse(JSON.stringify(row))
 }
 
 function editsubmit(){
   proxy.$http.post("http://localhost:8000/api/editgroup/",{
-    'groupid':edited.value.groupid,
-    'groupname':edited.value.groupname,
+    'groupid':selected.value.groupid,
+    'groupname':selected.value.groupname,
     'token':localStorage.getItem("token"),
   },{
     headers: {'Content-Type': 'multipart/form-data'}
@@ -179,14 +175,13 @@ var rightscheck=ref();
 
 function changeclear(row){
   changeVisible.value=true;
-  selected.value=row;
-  edited.value=JSON.parse(JSON.stringify(selected.value))
+  selected.value=JSON.parse(JSON.stringify(row))
   getrights();
 }
 
 function getrights(){
   proxy.$http.post("http://localhost:8000/api/getrights/",{
-    'groupid':edited.value.groupid,
+    'groupid':selected.value.groupid,
     'token':localStorage.getItem("token"),
   },{
     headers: {'Content-Type': 'multipart/form-data'}
@@ -201,7 +196,7 @@ function getrights(){
 
 function editrights(){
   proxy.$http.post("http://localhost:8000/api/editrights/",{
-    'groupid':edited.value.groupid,
+    'groupid':selected.value.groupid,
     'rights':JSON.stringify(rightscheck.value),
     'token':localStorage.getItem("token"),
   },{

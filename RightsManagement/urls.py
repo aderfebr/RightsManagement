@@ -21,6 +21,7 @@ urlpatterns = [
     path("api/register/",views.register),
     path("api/login/",views.login),
     path("api/getuser/",views.getuser),
+    path("api/adduser/",views.adduser),
     path("api/edituser/",views.edituser),
     path("api/changepwd/",views.changepwd),
     path("api/getgroupbyuser/",views.getgroupbyuser),

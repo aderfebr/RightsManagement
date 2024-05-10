@@ -1,5 +1,33 @@
 <template>
     <div class="main">
+      <el-dialog
+          v-model="addVisible"
+          title="添加用户"
+          width="500"
+          :before-close="handleClose"
+        >
+          <span>用户名:</span>
+          <el-input 
+            style="padding: 5px 0;"
+            v-model="selected.username"
+          />
+          <span>年龄:</span>
+          <el-input 
+            style="padding: 5px 0;"
+            v-model="selected.age"
+          />
+          <span>地址:</span>
+          <el-input 
+            style="padding: 5px 0;"
+            v-model="selected.address"
+          />
+          <template #footer>
+            <div class="dialog-footer">
+              <el-button @click="addVisible = false">取消</el-button>
+              <el-button type="success" @click="addVisible = false;addsubmit();">确认</el-button>
+            </div>
+          </template>
+        </el-dialog>
         <el-dialog
           v-model="editVisible"
           title="修改用户"
@@ -9,23 +37,24 @@
           <span>ID:</span>
           <el-input 
             style="padding: 5px 0;"
-            v-model="edited.userid"
+            v-model="selected.userid"
             disabled
           />
           <span>用户名:</span>
           <el-input 
             style="padding: 5px 0;"
-            v-model="edited.username"
+            v-model="selected.username"
+            disabled
           />
           <span>年龄:</span>
           <el-input 
             style="padding: 5px 0;"
-            v-model="edited.age"
+            v-model="selected.age"
           />
           <span>地址:</span>
           <el-input 
             style="padding: 5px 0;"
-            v-model="edited.address"
+            v-model="selected.address"
           />
           <br><br><el-button type="primary" @click="pwdclear();">修改密码</el-button>
           <template #footer>
@@ -98,8 +127,8 @@
         <el-divider></el-divider>
         <div v-if="auth">
           <el-row style="font-size: 25px;">
-              <el-col :span="20"><el-input size="large" v-model="filter" style="width: 300px"/>&ensp;<el-button type="primary" @click="getuser">搜索&ensp;<el-icon><Search /></el-icon></el-button></el-col>
-              <el-col :span="4" style="text-align: right;"><el-button type="success" @click="adduser">增加用户&ensp;+</el-button></el-col>
+              <el-col :span="20"><el-input size="large" v-model="filter" placeholder="按用户名搜索" style="width: 300px"/>&ensp;<el-button type="primary" @click="getuser">搜索&ensp;<el-icon><Search /></el-icon></el-button><el-button type="danger" @click="filter='';getuser();">清空过滤&ensp;<el-icon><Close /></el-icon></el-button></el-col>
+              <el-col :span="4" style="text-align: right;"><el-button type="success" @click="selected={};addVisible=true">添加用户&ensp;+</el-button></el-col>
           </el-row>
           <br>
           <el-table :data="tableData" style="width: 100%">
@@ -119,7 +148,7 @@
               <template #default="scope">
                 <el-button type="warning" @click="editclear(scope.row);">修改用户</el-button>
                 <el-button type="primary" @click="changeclear(scope.row);">修改角色</el-button>
-                <el-button type="danger" @click="deleteVisible=true;selected=scope.row;">删除</el-button>
+                <el-button type="danger" @click="selected=scope.row;deleteVisible=true;">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -136,11 +165,13 @@ const {proxy} = getCurrentInstance()
 
 var tableData=ref();
 var auth=ref(false);
+var filter=ref();
 var selected=ref();
 
 function getuser(){
   proxy.$http.post("http://localhost:8000/api/getuser/",{
     'token':localStorage.getItem("token"),
+    'filter':filter.value,
   },{
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
@@ -151,38 +182,41 @@ function getuser(){
   });
 }
 
-var edited=ref({});
-var editVisible=ref(false);
+var addVisible=ref(false);
 
-function adduser(){
-  router.push('/register');
-}
-
-function editclear(row){
-  editVisible.value=true;
-  selected.value=row;
-  edited.value=JSON.parse(JSON.stringify(selected.value))
-}
-
-function editsubmit(){
-  proxy.$http.post("http://localhost:8000/api/edituser/",{
-    'userid':edited.value.userid,
-    'username':edited.value.username,
-    'age':edited.value.age,
-    'address':edited.value.address,
+function addsubmit(){
+  proxy.$http.post("http://localhost:8000/api/adduser/",{
+    'username':selected.value.username,
+    'age':selected.value.age,
+    'address':selected.value.address,
     'token':localStorage.getItem("token"),
   },{
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
-    if(res.data.code==200&&edited.value.username==localStorage.getItem("username")){
-      window.alert(res.data.msg);
-      logout();
-    }
     if(res.data.code==403) window.alert(res.data.msg);
-  });
-  setTimeout(() => {
     getuser();
-  }, 200);
+  });
+}
+
+var editVisible=ref(false);
+
+function editclear(row){
+  editVisible.value=true;
+  selected.value=JSON.parse(JSON.stringify(row))
+}
+
+function editsubmit(){
+  proxy.$http.post("http://localhost:8000/api/edituser/",{
+    'userid':selected.value.userid,
+    'age':selected.value.age,
+    'address':selected.value.address,
+    'token':localStorage.getItem("token"),
+  },{
+    headers: {'Content-Type': 'multipart/form-data'}
+  }).then((res)=>{
+    if(res.data.code==403) window.alert(res.data.msg);
+    getuser();
+  });
 }
 
 var pwdVisible=ref(false);
@@ -204,7 +238,7 @@ function pwdsubmit(){
   },{
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
-    if(res.data.code==200&&edited.value.username==localStorage.getItem("username")){
+    if(res.data.code==200&&selected.value.username==localStorage.getItem("username")){
       window.alert(res.data.msg);
       logout();
     }
@@ -218,14 +252,13 @@ var groupcheck=ref();
 
 function changeclear(row){
   changeVisible.value=true;
-  selected.value=row;
-  edited.value=JSON.parse(JSON.stringify(selected.value));
+  selected.value=JSON.parse(JSON.stringify(row));
   getgroup();
 }
 
 function getgroup(){
   proxy.$http.post("http://localhost:8000/api/getgroupbyuser/",{
-    'userid':edited.value.userid,
+    'userid':selected.value.userid,
     'token':localStorage.getItem("token"),
   },{
     headers: {'Content-Type': 'multipart/form-data'}
@@ -240,7 +273,7 @@ function getgroup(){
 
 function editgroup(){
   proxy.$http.post("http://localhost:8000/api/editgroupbyuser/",{
-    'userid':edited.value.userid,
+    'userid':selected.value.userid,
     'group':JSON.stringify(groupcheck.value),
     'token':localStorage.getItem("token"),
   },{
