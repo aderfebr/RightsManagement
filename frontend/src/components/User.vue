@@ -222,7 +222,7 @@ function editsubmit(){
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
     if(res.data.code==403) window.alert(res.data.msg);
-    getuser();
+    else getuser();
   });
 }
 

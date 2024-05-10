@@ -329,12 +329,12 @@ def getmenu(request):
     return JsonResponse(res,safe=False)
 
 def editmenu(request):
-    index=request.POST.get("index")
+    id=request.POST.get("id")
+    label=request.POST.get("label")
+    icon=request.POST.get("icon")
     token=request.POST.get("token")
-    if getauth(token,7):
-        index=json.loads(index)
-        for i in index:
-            Menu.objects.filter(id=i["id"]).update(vis=i["vis"])
+    if getauth(token,11):
+        Menu.objects.filter(id=id).update(label=label,icon=icon)
         return JsonResponse({
             'code':200,
             'msg':'修改菜单成功',

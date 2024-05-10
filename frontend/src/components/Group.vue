@@ -149,10 +149,8 @@ function addsubmit(){
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
     if(res.data.code==403) window.alert(res.data.msg);
+    else getgroup();
   });
-  setTimeout(() => {
-    getgroup();
-  }, 200);
 }
 
 var editVisible=ref(false);
@@ -171,10 +169,8 @@ function editsubmit(){
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
     if(res.data.code==403) window.alert(res.data.msg);
+    else getgroup();
   });
-  setTimeout(() => {
-    getgroup();
-  }, 200);
 }
 
 var changeVisible=ref(false);
@@ -224,7 +220,7 @@ function deletesubmit(){
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
     if(res.data.code==403) window.alert(res.data.msg);
-    getgroup();
+    else getgroup();
   });
 }
 
