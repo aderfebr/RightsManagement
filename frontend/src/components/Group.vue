@@ -97,6 +97,10 @@
               </template>
             </el-table-column>
           </el-table>
+          <br>
+          <el-row style="justify-content: center;">
+            <el-pagination background layout="prev, pager, next" :page-count="total" v-model:current-page="page" @update:current-page="getuser"/>
+          </el-row>
         </div>
         <div v-if="!auth" style="width: 100%;text-align: center;font-size: 25px;color: red;">未授权!</div>
     </div>
@@ -110,17 +114,21 @@ const {proxy} = getCurrentInstance()
 var tableData=ref();
 var auth=ref(false);
 var filter=ref();
+var page=ref(1);
+var total=ref(1);
 var selected=ref();
 
 function getgroup(){
   proxy.$http.post("http://localhost:8000/api/getgroup/",{
     'token':localStorage.getItem("token"),
     'filter':filter.value,
+    'page':page.value,
   },{
     headers: {'Content-Type': 'multipart/form-data'}
   }).then((res)=>{
     if(res.data.code==200){
       tableData.value=res.data.data;
+      total.value=res.data.total;
       auth.value=true;
     }
   });

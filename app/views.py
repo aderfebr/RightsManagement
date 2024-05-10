@@ -73,13 +73,17 @@ def login(request):
 def getuser(request):
     token=request.POST.get("token")
     filter=request.POST.get("filter")
+    page=int(request.POST.get("page"))
     if getauth(token,1):
         if filter is None:
-            res=list(User.objects.all().values())
+            res=User.objects.all()
         else:
-            res=list(User.objects.filter(username__contains=filter).values())
+            res=User.objects.filter(username__contains=filter)
+        res=res[page*10-10:page*10]
+        total=User.objects.count()
         return JsonResponse({
-            'data':res,
+            'data':list(res.values()),
+            'total':total//10+(total%10!=0),
             'code':200,
             'msg':'查询用户成功',
         })
@@ -208,13 +212,17 @@ def deleteuser(request):
 def getgroup(request):
     token=request.POST.get("token")
     filter=request.POST.get("filter")
-    if getauth(token,6):
+    page=int(request.POST.get("page"))
+    if getauth(token,1):
         if filter is None:
-            res=list(Group.objects.all().values())
+            res=Group.objects.all()
         else:
-            res=list(Group.objects.filter(groupname__contains=filter).values())
+            res=Group.objects.filter(username__contains=filter)
+        res=res[page*10-10:page*10]
+        total=Group.objects.count()
         return JsonResponse({
-            'data':res,
+            'data':list(res.values()),
+            'total':total//10+(total%10!=0),
             'code':200,
             'msg':'查询角色成功',
         })
