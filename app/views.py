@@ -217,7 +217,7 @@ def getgroup(request):
         if filter is None:
             res=Group.objects.all()
         else:
-            res=Group.objects.filter(username__contains=filter)
+            res=Group.objects.filter(groupname__contains=filter)
         res=res[page*10-10:page*10]
         total=Group.objects.count()
         return JsonResponse({
