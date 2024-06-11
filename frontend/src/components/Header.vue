@@ -9,7 +9,6 @@
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item @click="login">用户登录</el-dropdown-item>
-                <el-dropdown-item @click="register">用户注册</el-dropdown-item>
                 <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -26,10 +25,6 @@ var username=ref(localStorage.getItem('username'))
 
 function login(){
   router.push('/login');
-}
-
-function register(){
-  router.push('/register');
 }
 
 function logout(){

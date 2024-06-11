@@ -29,8 +29,11 @@ var username=ref("");
 var password=ref("");
 
 function submit(){
-  if(username.value==""||password.value==""){
-    window.alert("信息不能为空");
+  if(!username.value){
+    window.alert("用户名不能为空");
+  }
+  else if(!password.value){
+    window.alert("密码不能为空");
   }
   else{
   proxy.$http.post("http://localhost:8000/api/login/",{

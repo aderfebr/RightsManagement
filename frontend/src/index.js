@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router"
 const Login=()=> import('./components/Login.vue')
-const Register=()=> import('./components/Register.vue')
 const Nav=()=> import('./components/Nav.vue')
 const User=()=> import('./components/User.vue')
 const Group=()=> import('./components/Group.vue')
@@ -10,10 +9,6 @@ const routes=[
     {
         path:'/login',
         component: Login,
-    },
-    {
-        path:'/register',
-        component: Register,
     },
     {
         component: Nav,

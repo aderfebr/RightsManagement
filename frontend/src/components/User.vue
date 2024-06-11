@@ -11,6 +11,13 @@
             style="padding: 5px 0;"
             v-model="selected.username"
           />
+          <span>密码:</span>
+          <el-input 
+            style="padding: 5px 0;"
+            v-model="selected.password"
+            type="password"
+            show-password
+          />
           <span>年龄:</span>
           <el-input 
             style="padding: 5px 0;"
@@ -192,17 +199,26 @@ function getuser(){
 var addVisible=ref(false);
 
 function addsubmit(){
-  proxy.$http.post("http://localhost:8000/api/adduser/",{
-    'username':selected.value.username,
-    'age':selected.value.age,
-    'address':selected.value.address,
-    'token':localStorage.getItem("token"),
-  },{
-    headers: {'Content-Type': 'multipart/form-data'}
-  }).then((res)=>{
-    if(res.data.code==403) window.alert(res.data.msg);
-    getuser();
-  });
+  if(!selected.value.password){
+    window.alert("用户名不能为空");
+  }
+  else if(!selected.value.username){
+    window.alert("密码不能为空");
+  }
+  else{
+    proxy.$http.post("http://localhost:8000/api/adduser/",{
+      'username':selected.value.username,
+      'password':selected.value.password,
+      'age':selected.value.age,
+      'address':selected.value.address,
+      'token':localStorage.getItem("token"),
+    },{
+      headers: {'Content-Type': 'multipart/form-data'}
+    }).then((res)=>{
+      if(res.data.code==403) window.alert(res.data.msg);
+      getuser();
+    });
+  }
 }
 
 var editVisible=ref(false);

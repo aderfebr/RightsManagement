@@ -27,22 +27,6 @@ def add_salt(text):
     password=md.hexdigest()
     return password
 
-def register(request):
-    username=request.POST.get("username")
-    password=request.POST.get("password")
-    if User.objects.filter(username=username):
-        return JsonResponse({
-        'code':403,
-        'msg':'用户已存在',
-        })
-    else:
-        password=add_salt(password)
-        User.objects.create(username=username,password=password)
-        return JsonResponse({
-            'code':200,
-            'msg':'注册成功',
-        })
-
 def login(request):
     username=request.POST.get("username")
     password=request.POST.get("password")
@@ -95,20 +79,29 @@ def getuser(request):
 
 def adduser(request):
     username=request.POST.get("username")
-    age=request.POST.get("age")
-    address=request.POST.get("address")
-    token=request.POST.get("token")
-    if getauth(token,2):
-        User.objects.create(username=username,age=age,address=address)
+    if User.objects.filter(username=username):
         return JsonResponse({
-            'code':200,
-            'msg':'修改用户成功',
+        'code':403,
+        'msg':'用户已存在',
         })
     else:
-        return JsonResponse({
-            'code':403,
-            'msg':'未授权',
-        })
+        password=request.POST.get("password")
+        password=add_salt(password)
+        age=request.POST.get("age")
+        address=request.POST.get("address")
+        token=request.POST.get("token")
+        User.objects.create(username=username,password=password)
+        if getauth(token,2):
+            User.objects.create(username=username,age=age,address=address)
+            return JsonResponse({
+                'code':200,
+                'msg':'修改用户成功',
+            })
+        else:
+            return JsonResponse({
+                'code':403,
+                'msg':'未授权',
+            })
 
 def edituser(request):
     userid=request.POST.get("userid")

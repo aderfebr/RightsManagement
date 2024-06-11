@@ -142,15 +142,20 @@ function addclear(){
 }
 
 function addsubmit(){
-  proxy.$http.post("http://localhost:8000/api/addgroup/",{
-    'groupname':selected.value.groupname,
-    'token':localStorage.getItem("token"),
-  },{
-    headers: {'Content-Type': 'multipart/form-data'}
-  }).then((res)=>{
-    if(res.data.code==403) window.alert(res.data.msg);
-    else getgroup();
-  });
+  if(!selected.value.groupname){
+    window.alert("角色名不能为空");
+  }
+  else{
+    proxy.$http.post("http://localhost:8000/api/addgroup/",{
+      'groupname':selected.value.groupname,
+      'token':localStorage.getItem("token"),
+    },{
+      headers: {'Content-Type': 'multipart/form-data'}
+    }).then((res)=>{
+      if(res.data.code==403) window.alert(res.data.msg);
+      else getgroup();
+    });
+  }
 }
 
 var editVisible=ref(false);
