@@ -90,9 +90,8 @@ def adduser(request):
         age=request.POST.get("age")
         address=request.POST.get("address")
         token=request.POST.get("token")
-        User.objects.create(username=username,password=password)
         if getauth(token,2):
-            User.objects.create(username=username,age=age,address=address)
+            User.objects.create(username=username,password=password,age=age,address=address)
             return JsonResponse({
                 'code':200,
                 'msg':'修改用户成功',
